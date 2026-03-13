@@ -1,23 +1,40 @@
-# Dependencies
-node_modules/
-package-lock.json
-yarn.lock
-
-# OpenClaw specific
-.learn-system/
-*.log
-
-# OS files
-.DS_Store
-Thumbs.db
-
-# IDE
+# Editor and IDE
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
+.DS_Store
+
+# Dependencies
+node_modules/
+package-lock.json
+yarn.lock
 
 # Temporary files
 *.tmp
+*.temp
+.tmp/
+
+# Backup files
+*.bak
+.backup/
+.backups/
+
+# Logs
+*.log
+logs/
+
+# OS generated files
+Thumbs.db
+.DS_Store
+
+# Skills store lock file (local install state)
+skills/.skills_store_lock.json
+
+# OpenClaw specific
+.learn-system/
+
+# Cache
 .cache/
+
