@@ -2,7 +2,7 @@
 
 ![OpenClaw](https://img.shields.io/badge/OpenClaw-1.0.0-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
-![Skills](https://img.shields.io/badge/skills-5-orange)
+![Skills](https://img.shields.io/badge/skills-1-orange)
 ![Topics](https://img.shields.io/badge/topics-openclaw%20skills%20learning-purple)
 
 > OpenClaw 专用技能集合 - 专业、高效、专注
@@ -95,8 +95,6 @@ openclaw session learning-agent
 ---
 
 ## 📄 许可证
-
-MIT License - 详见 [LICENSE](./LICENSE)
 
 MIT License - 详见 [LICENSE](./LICENSE)
 
