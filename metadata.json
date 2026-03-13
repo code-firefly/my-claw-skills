@@ -1,0 +1,53 @@
+{
+  "name": "learn-system-openclaw",
+  "version": "1.0.0",
+  "category": "learning",
+  "description": "完整的学习管理系统，支持学习目标管理、课程学习、进度追踪、书签管理和知识缓存",
+  "subskills": [
+    "modules/goal-creator",
+    "modules/goal-tracker",
+    "modules/module-manager",
+    "modules/status",
+    "modules/tools"
+  ],
+  "created_at": "2026-03-13",
+  "author": "code-firefly",
+  "tags": [
+    "learning",
+    "education",
+    "progress-tracking",
+    "bookmarks",
+    "knowledge-management",
+    "goals",
+    "courses"
+  ],
+  "platforms": {
+    "universal": {
+      "status": "not-planned",
+      "tested_at": null,
+      "notes": "OpenClaw专用版本，基于Universal learn-*技能转换"
+    },
+    "claude-code": {
+      "status": "not-planned",
+      "claude_code_version": null,
+      "model_version": null,
+      "tested_at": null,
+      "notes": ""
+    },
+    "openclaw": {
+      "status": "supported",
+      "openclaw_version": "1.0.0",
+      "tested_at": "2026-03-13",
+      "notes": "基于Universal learn-*技能转换整合，统一发布为单个skill"
+    }
+  },
+  "dependencies": [],
+  "related_skills": [
+    "learn-goal-creator",
+    "learn-goal-tracker",
+    "learn-module-manager",
+    "learn-status",
+    "learn-tools"
+  ],
+  "changelog": "详见 CHANGELOG.md"
+}
