@@ -1,0 +1,340 @@
+{
+  "skill_name": "learn-system-openclaw",
+  "evals": [
+    {
+      "id": 1,
+      "name": "create-new-learning-goal",
+      "prompt": "我要学习 OpenClaw 技能开发，创建一个学习目标",
+      "expected_output": "成功创建学习目标，生成课程结构，创建 .learn-system/ 目录结构，包含 goals/, courses/, progress/ 等目录",
+      "files": [],
+      "assertions": [
+        {
+          "name": "directory_structure_created",
+          "description": "验证 .learn-system/ 目录结构被正确创建",
+          "check": "check_directory_structure"
+        },
+        {
+          "name": "goal_file_created",
+          "description": "验证学习目标文件被创建在 goals/active/ 目录下",
+          "check": "check_goal_file"
+        },
+        {
+          "name": "course_structure_generated",
+          "description": "验证课程目录结构和文件被创建",
+          "check": "check_course_structure"
+        },
+        {
+          "name": "interactive_questions_asked",
+          "description": "验证系统询问了学习目的、当前水平、期望时长、学习侧重点等问题",
+          "check": "check_interactive_questions"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "start-existing-course",
+      "prompt": "我要学习 ai-tools-fundamentals 这门课程",
+      "expected_output": "识别为现有课程，路由到 module-manager，开始学习，更新进度状态",
+      "files": [],
+      "assertions": [
+        {
+          "name": "course_recognized",
+          "description": "验证系统识别出这是现有课程而非新学习目标",
+          "check": "check_course_recognized"
+        },
+        {
+          "name": "module_manager_routed",
+          "description": "验证请求被正确路由到 module-manager 模块",
+          "check": "check_routing_to_module_manager"
+        },
+        {
+          "name": "learning_started",
+          "description": "验证学习状态被正确更新",
+          "check": "check_learning_status_updated"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "view-learning-status",
+      "prompt": "查看我的学习状态",
+      "expected_output": "显示所有学习目标的进度概览，包括已完成、进行中、暂停的课程",
+      "files": [],
+      "assertions": [
+        {
+          "name": "status_displayed",
+          "description": "验证显示了学习状态信息",
+          "check": "check_status_displayed"
+        },
+        {
+          "name": "progress_shown",
+          "description": "验证显示了课程进度信息",
+          "check": "check_progress_shown"
+        },
+        {
+          "name": "status_module_routed",
+          "description": "验证请求被正确路由到 status 模块",
+          "check": "check_routing_to_status"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "create-bookmark",
+      "prompt": "创建一个书签，记录关于 Tool Use 机制的疑问",
+      "expected_output": "成功创建书签，保存到 bookmarks/ 目录，包含书签内容、时间戳等",
+      "files": [],
+      "assertions": [
+        {
+          "name": "bookmark_created",
+          "description": "验证书签文件被创建",
+          "check": "check_bookmark_created"
+        },
+        {
+          "name": "bookmark_content_saved",
+          "description": "验证书签内容被正确保存",
+          "check": "check_bookmark_content"
+        },
+        {
+          "name": "tools_module_routed",
+          "description": "验证请求被正确路由到 tools 模块",
+          "check": "check_routing_to_tools"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "refresh-cache",
+      "prompt": "刷新 OpenClaw 的知识缓存",
+      "expected_output": "成功更新课程知识缓存，生成或更新 cache/ 目录下的缓存文件",
+      "files": [],
+      "assertions": [
+        {
+          "name": "cache_updated",
+          "description": "验证缓存文件被更新",
+          "check": "check_cache_updated"
+        },
+        {
+          "name": "cache_directory_exists",
+          "description": "验证 cache/ 目录存在",
+          "check": "check_cache_directory"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "name": "switch-learning-goal",
+      "prompt": "切换学习目标到另一个",
+      "expected_output": "显示所有学习目标列表，允许用户选择并切换激活的目标，更新 active-goal.md",
+      "files": [],
+      "assertions": [
+        {
+          "name": "goals_listed",
+          "description": "验证显示了学习目标列表",
+          "check": "check_goals_listed"
+        },
+        {
+          "name": "active_goal_updated",
+          "description": "验证 active-goal.md 被更新",
+          "check": "check_active_goal_updated"
+        },
+        {
+          "name": "goal_tracker_routed",
+          "description": "验证请求被正确路由到 goal-tracker 模块",
+          "check": "check_routing_to_goal_tracker"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "name": "pause-resume-goal",
+      "prompt": "暂停当前学习目标",
+      "expected_output": "将当前目标从 active/ 移动到 paused/，更新目标状态",
+      "files": [],
+      "assertions": [
+        {
+          "name": "goal_paused",
+          "description": "验证目标状态被更新为暂停",
+          "check": "check_goal_status_paused"
+        },
+        {
+          "name": "file_moved",
+          "description": "验证目标文件被移动到 paused/ 目录",
+          "check": "check_goal_file_moved"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "name": "view-bookmarks",
+      "prompt": "查看我的所有书签",
+      "expected_output": "显示所有书签列表，包括书签内容、状态（进行中/已完成）、创建时间",
+      "files": [],
+      "assertions": [
+        {
+          "name": "bookmarks_listed",
+          "description": "验证显示了书签列表",
+          "check": "check_bookmarks_listed"
+        },
+        {
+          "name": "bookmark_status_shown",
+          "description": "验证显示了每个书签的状态",
+          "check": "check_bookmark_status"
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "name": "update-progress",
+      "prompt": "更新当前学习进度，我已经完成了第一个模块",
+      "expected_output": "更新 progress/ 目录下的进度文件，标记第一个模块为已完成，计算总体进度百分比",
+      "files": [],
+      "assertions": [
+        {
+          "name": "progress_updated",
+          "description": "验证进度文件被更新",
+          "check": "check_progress_updated"
+        },
+        {
+          "name": "module_marked_complete",
+          "description": "验证第一个模块被标记为已完成",
+          "check": "check_module_completed"
+        },
+        {
+          "name": "status_module_routed",
+          "description": "验证请求被正确路由到 status 模块",
+          "check": "check_routing_to_status"
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "name": "complete-bookmark",
+      "prompt": "完成这个书签：Tool Use 机制的疑问",
+      "expected_output": "将指定书签标记为已完成，更新书签状态",
+      "files": [],
+      "assertions": [
+        {
+          "name": "bookmark_completed",
+          "description": "验证书签被标记为已完成",
+          "check": "check_bookmark_completed"
+        },
+        {
+          "name": "bookmark_status_updated",
+          "description": "验证书签状态被更新",
+          "check": "check_bookmark_status_updated"
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "name": "view-goals-list",
+      "prompt": "显示所有学习目标",
+      "expected_output": "列出所有学习目标（激活、暂停、已完成、归档），显示每个目标的基本信息和状态",
+      "files": [],
+      "assertions": [
+        {
+          "name": "all_goals_listed",
+          "description": "验证列出了所有学习目标",
+          "check": "check_all_goals_listed"
+        },
+        {
+          "name": "goal_status_shown",
+          "description": "验证显示了每个目标的状态",
+          "check": "check_goal_status_shown"
+        },
+        {
+          "name": "goal_tracker_routed",
+          "description": "验证请求被正确路由到 goal-tracker 模块",
+          "check": "check_routing_to_goal_tracker"
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "name": "intent-routing-new-topic",
+      "prompt": "我想学 Docker 容器技术",
+      "expected_output": "识别为新学习领域，路由到 goal-creator 模块，开始创建学习目标的流程",
+      "files": [],
+      "assertions": [
+        {
+          "name": "new_topic_recognized",
+          "description": "验证识别为新学习领域",
+          "check": "check_new_topic_recognized"
+        },
+        {
+          "name": "goal_creator_routed",
+          "description": "验证被路由到 goal-creator 模块",
+          "check": "check_routing_to_goal_creator"
+        },
+        {
+          "name": "goal_creation_started",
+          "description": "验证开始创建学习目标的流程",
+          "check": "check_goal_creation_started"
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "name": "intent-routing-existing-course",
+      "prompt": "我要学 prompt-engineering",
+      "expected_output": "识别为现有课程（如果存在），路由到 module-manager 模块，开始学习",
+      "files": [],
+      "assertions": [
+        {
+          "name": "existing_course_checked",
+          "description": "验证检查了课程是否已存在",
+          "check": "check_existing_course_checked"
+        },
+        {
+          "name": "module_manager_routed",
+          "description": "验证被路由到 module-manager 模块",
+          "check": "check_routing_to_module_manager"
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "name": "negative-trigger-bug-learning",
+      "prompt": "学习这个 bug 的原因，看看为什么代码会出错",
+      "expected_output": "不应该触发 learn-system-openclaw 技能，或触发后能正确识别为非学习目标场景并优雅退出",
+      "files": [],
+      "assertions": [
+        {
+          "name": "no_false_positive",
+          "description": "验证没有误触发学习系统技能",
+          "check": "check_no_false_positive"
+        },
+        {
+          "name": "graceful_exit",
+          "description": "验证优雅地退出或拒绝",
+          "check": "check_graceful_exit"
+        }
+      ]
+    },
+    {
+      "id": 15,
+      "name": "edge-case-empty-input",
+      "prompt": "我要学",
+      "expected_output": "识别为不完整的输入，提示用户输入学习主题，而不是创建空的目标或报错",
+      "files": [],
+      "assertions": [
+        {
+          "name": "incomplete_input_detected",
+          "description": "验证识别出不完整的输入",
+          "check": "check_incomplete_input_detected"
+        },
+        {
+          "name": "prompt_for_topic",
+          "description": "验证提示用户输入学习主题",
+          "check": "check_prompt_for_topic"
+        },
+        {
+          "name": "no_empty_goal_created",
+          "description": "验证没有创建空的目标",
+          "check": "check_no_empty_goal_created"
+        }
+      ]
+    }
+  ]
+}
