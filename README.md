@@ -1,5 +1,10 @@
 # my-claw-skills
 
+![OpenClaw](https://img.shields.io/badge/OpenClaw-1.0.0-blue)
+![License](https://img.shields.io/badge/license-MIT-green)
+![Skills](https://img.shields.io/badge/skills-5-orange)
+![Topics](https://img.shields.io/badge/topics-openclaw%20skills%20learning-purple)
+
 > OpenClaw 专用技能集合 - 专业、高效、专注
 
 ## 📋 简介
@@ -77,11 +82,21 @@ openclaw session learning-agent
 
 ## 🤝 贡献
 
-欢迎贡献！请阅读 [CONTRIBUTING.md](./CONTRIBUTING.md) 了解详情。
+欢迎贡献！请阅读 [CONTRIBUTING.md](./learn-system-openclaw/CONTRIBUTING.md) 了解详情。
+
+### 如何贡献
+
+1. Fork 本仓库
+2. 创建特性分支 (`git checkout -b feature/AmazingFeature`)
+3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
+4. 推送到分支 (`git push origin feature/AmazingFeature`)
+5. 开启 Pull Request
 
 ---
 
 ## 📄 许可证
+
+MIT License - 详见 [LICENSE](./LICENSE)
 
 MIT License - 详见 [LICENSE](./LICENSE)
 
