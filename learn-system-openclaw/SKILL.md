@@ -9,11 +9,11 @@ subskills:
   - modules/tools.md
 ---
 
-# 学习管理系统 (Learn System) v2.0.0
+# 学习管理系统 (Learn System) v0.2.0
 
 > 本技能提供完整的学习管理功能，包括目标创建、课程学习、进度追踪、书签管理和知识缓存。
 
-**重要变更**：v2.0.0 采用项目级目录管理（`.learning/`），简化路径控制，增加强制性规则，确保路径 100% 有效。
+**重要变更**：v0.2.0 采用项目级目录管理（`.learning/`），简化路径控制，增加强制性规则，确保路径 100% 有效。
 
 ---
 
@@ -294,7 +294,7 @@ EOF
 
 ```json
 {
-  "version": "2.0.0",
+  "version": "0.2.0",
   "active_goal_id": "learn-docker",
   "goals": {
     "learn-docker": {
@@ -315,7 +315,7 @@ EOF
 
 ```json
 {
-  "version": "2.0.0",
+  "version": "0.2.0",
   "active_goal_id": "learn-docker",
   "courses": {
     "docker-fundamentals": {
@@ -341,7 +341,7 @@ EOF
 
 ```json
 {
-  "version": "2.0.0",
+  "version": "0.2.0",
   "bookmarks": {
     "tool-use-questions": {
       "id": "bookmark-1234567890",
@@ -369,7 +369,7 @@ EOF
 
 ## 📋 更新日志
 
-### v2.0.0 (2026-03-13)
+### v0.2.0 (2026-03-13)
 
 **重大变更**：
 - 从全局目录（`~/.learn-system/`）切换为项目级目录（`.learning/`）
@@ -388,5 +388,5 @@ EOF
 
 ---
 
-*Version: 2.0.0*
+*Version: 0.2.0*
 *Created: 2026-03-13*
