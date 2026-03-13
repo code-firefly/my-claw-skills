@@ -72,7 +72,7 @@ openclaw session learning-agent
 
 ### 从 Universal Skills 转换
 
-1. 参考 Universal 技能（`/home/wangxg/projects/my-skills/universal/`）
+1. 从 Universal Skills 获取源码（上游）
 2. 转换为 OpenClaw 格式
 3. 优化 description 和触发关键词
 4. 测试验证
@@ -107,13 +107,6 @@ MIT License - 详见 [LICENSE](./LICENSE)
 - **作者**: code-firefly
 - **GitHub**: https://github.com/code-firefly/my-claw-skills
 - **ClawHub**: (待发布）
-
----
-
-## 🔗 相关仓库
-
-- **Universal Skills**: https://github.com/code-firefly/my-skills
-- **Claude Code Skills**: (待创建）
 
 ---
 

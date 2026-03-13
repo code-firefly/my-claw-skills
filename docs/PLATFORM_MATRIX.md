@@ -24,13 +24,17 @@
 
 ## Universal Skills (Reference)
 
-| Skill | Version | Created | Universal Repo |
-|-------|---------|---------|---------------|
-| learn-goal-creator | 1.0.0 | 2026-03-12 | my-skills |
-| learn-goal-tracker | 1.0.0 | 2026-03-12 | my-skills |
-| learn-module-manager | 1.0.0 | 2026-03-12 | my-skills |
-| learn-status | 1.0.0 | 2026-03-12 | my-skills |
-| learn-tools | 1.0.0 | 2026-03-12 | my-skills |
+> 说明：以下技能的源码位于上游仓库（Universal Skills）
+
+| Skill | Version | Created | 来源 |
+|-------|---------|---------|------|
+| learn-goal-creator | 1.0.0 | 2026-03-12 | Universal Skills |
+| learn-goal-tracker | 1.0.0 | 2026-03-12 | Universal Skills |
+| learn-module-manager | 1.0.0 | 2026-03-12 | Universal Skills |
+| learn-status | 1.0.0 | 2026-03-12 | Universal Skills |
+| learn-tools | 1.0.0 | 2026-03-12 | Universal Skills |
+
+**说明**：`learn-system-openclaw` 是从以上 5 个技能整合转换而来。
 
 ---
 
@@ -49,18 +53,18 @@
 ```
                     ┌─────────────────┐
                     │  Universal      │
+                    │  Skills         │
                     │  (上游源码)      │
-                    │  my-skills/     │
                     └────────┬────────┘
                              │
                     ┌────────┴────────┐
                     ▼                 ▼
          ┌─────────────────┐ ┌─────────────────┐
-│  learn-system-   │ │ (更多技能)      │
-│  openclaw        │ │                 │
-│  ✅ 已完成        │ │ 🔄 计划中       │
-└─────────────────┘ └─────────────────┘
-     v1.0.0
+         │  learn-system-   │ │ (更多技能)      │
+         │  openclaw        │ │                 │
+         │  ✅ 已完成        │ │ 🔄 计划中       │
+         └─────────────────┘ └─────────────────┘
+                  v1.0.0
 
                     ↓ ClawHub
          ┌─────────────────┐
@@ -79,13 +83,6 @@
 2. **使用的 OpenClaw 版本**
 3. **必要的修改说明**
 4. **测试结果**
-
----
-
-## Related Repositories
-
-- **Universal Skills**: https://github.com/code-firefly/my-skills
-- **Claude Code Skills**: (待创建）my-claude-skills
 
 ---
 

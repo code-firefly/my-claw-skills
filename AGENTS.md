@@ -54,18 +54,6 @@
 5. **质量检查** - 检查符合规范
 6. **版本发布** - 更新版本号，发布到 ClawHub
 
-## Relationships
-
-### Universal Skills (上游)
-- **仓库**: `/home/wangxg/projects/my-skills`
-- **用途**: 参考规范，作为转换源码
-- **同步**: 不自动同步，需手动评估更新
-
-### Claude Code Skills (独立)
-- **仓库**: (待创建）my-claude-skills
-- **用途**: Claude Code 专用技能
-- **同步**: 完全独立，不涉及
-
 ---
 
 *Created: 2026-03-13*
