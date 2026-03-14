@@ -60,7 +60,102 @@
       "type": "object",
       "description": "Learning goals included in the package",
       "additionalProperties": {
-        "$ref": "goals.schema.json#/definitions/goal"
+        "type": "object",
+        "required": ["id", "name", "status", "type", "created_at", "priority"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for goal",
+            "pattern": "^learn-[a-z0-9-]+$"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of learning goal",
+            "minLength": 1
+          },
+          "status": {
+            "type": "string",
+            "enum": ["active", "paused", "completed", "archived"],
+            "description": "Current status of goal"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["theory", "practice", "mixed"],
+            "description": "Type of learning goal"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date",
+            "description": "Creation date (YYYY-MM-DD)"
+          },
+          "completed_at": {
+            "type": ["string", "null"],
+            "format": "date",
+            "description": "Completion date (YYYY-MM-DD)",
+            "default": null
+          },
+          "description": {
+            "type": "string",
+            "description": "Detailed description of goal",
+            "default": ""
+          },
+          "priority": {
+            "type": "string",
+            "enum": ["P0", "P1", "P2", "P3"],
+            "description": "Priority level",
+            "default": "P1"
+          },
+          "course_name": {
+            "type": ["string", "null"],
+            "description": "Associated course name",
+            "default": null
+          },
+          "learning_purpose": {
+            "type": "string",
+            "enum": ["work", "interest", "project", "other"],
+            "description": "Learning purpose",
+            "default": "interest"
+          },
+          "knowledge_level": {
+            "type": "string",
+            "enum": ["beginner", "intermediate", "advanced"],
+            "description": "Current knowledge level",
+            "default": "beginner"
+          },
+          "expected_duration": {
+            "type": "string",
+            "description": "Expected learning duration",
+            "default": "1-2 weeks"
+          },
+          "learning_focus": {
+            "type": "string",
+            "enum": ["theory", "practice", "balanced"],
+            "description": "Learning focus area",
+            "default": "balanced"
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Additional metadata",
+            "properties": {
+              "author": {
+                "type": "string",
+                "description": "Author of goal"
+              },
+              "tags": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Tags for categorization"
+              },
+              "shareable": {
+                "type": "boolean",
+                "description": "Whether this goal can be shared",
+                "default": true
+              }
+            }
+          }
+        }
       }
     },
     "courses": {
@@ -82,7 +177,91 @@
       "description": "Optional bookmarks (can be shared or excluded)",
       "default": null,
       "additionalProperties": {
-        "$ref": "bookmarks.schema.json#/definitions/bookmark"
+        "type": "object",
+        "required": ["id", "title", "question", "status", "created_at"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for bookmark",
+            "pattern": "^bookmark-[0-9-]+$"
+          },
+          "title": {
+            "type": "string",
+            "description": "Title of bookmark",
+            "minLength": 1
+          },
+          "course": {
+            "type": ["string", "null"],
+            "description": "Associated course name",
+            "default": null
+          },
+          "module": {
+            "type": ["string", "null"],
+            "description": "Source module within the course",
+            "default": null
+          },
+          "question": {
+            "type": "string",
+            "description": "Question or topic to explore",
+            "minLength": 1
+          },
+          "status": {
+            "type": "string",
+            "enum": ["exploring", "completed", "skipped"],
+            "description": "Bookmark status",
+            "default": "exploring"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date",
+            "description": "Creation date (YYYY-MM-DD)"
+          },
+          "completed_at": {
+            "type": ["string", "null"],
+            "format": "date",
+            "description": "Completion date (YYYY-MM-DD)",
+            "default": null
+          },
+          "exploration_goals": {
+            "type": "array",
+            "description": "List of exploration goals",
+            "items": {
+              "type": "string"
+            },
+            "default": []
+          },
+          "exploration_notes": {
+            "type": "string",
+            "description": "Notes from exploration",
+            "default": ""
+          },
+          "return_criteria": {
+            "type": "array",
+            "description": "Criteria to consider bookmark complete",
+            "items": {
+              "type": "string"
+            },
+            "default": []
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Additional metadata",
+            "properties": {
+              "shareable": {
+                "type": "boolean",
+                "description": "Whether this bookmark can be shared",
+                "default": true
+              },
+              "tags": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Tags for categorization"
+              }
+            }
+          }
+        }
       }
     },
     "metadata": {
