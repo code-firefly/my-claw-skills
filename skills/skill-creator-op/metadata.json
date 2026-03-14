@@ -1,0 +1,49 @@
+{
+  "name": "skill-creator-op",
+  "version": "1.0.0-alpha.1",
+  "category": "development",
+  "description": "OpenClaw 优化版技能创建工具。创建、修改和测试 OpenClaw 技能，包含 OpenClaw 特定配置、ClawHub 发布指南和中文语境支持。",
+  "subskills": [],
+  "created_at": "2026-03-14",
+  "author": "code-firefly",
+  "tags": [
+    "skill-development",
+    "openclaw",
+    "testing",
+    "optimization",
+    "chinese",
+    "bilingual",
+    "clawhub"
+  ],
+  "platforms": {
+    "openclaw": {
+      "status": "supported",
+      "openclaw_version": "1.0.0",
+      "tested_at": "2026-03-14",
+      "notes": "OpenClaw 优化版，添加 metadata gating、环境变量注入、技能加载优先级、ClawHub 发布指南和中文语境支持"
+    },
+    "claude-code": {
+      "status": "compatible",
+      "claude_code_version": "1.0.0",
+      "model_version": "claude-3.5",
+      "tested_at": "2026-03-14",
+      "notes": "兼容 Claude Code，但推荐在 OpenClaw 上使用以获得完整功能"
+    },
+    "claude-ai": {
+      "status": "compatible",
+      "claude_ai_version": "1.0.0",
+      "tested_at": "2026-03-14",
+      "notes": "兼容 Claude.ai，但 subagent 功能受限"
+    }
+  },
+  "dependencies": [
+    "python3",
+    "node"
+  ],
+  "related_skills": [
+    "skill-creator",
+    "skill-scaffold"
+  ],
+  "changelog": "初始测试版。基于 skill-creator 添加 OpenClaw 特定配置和中文语境支持。",
+  "fork_of": "skill-creator"
+}
