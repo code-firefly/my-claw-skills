@@ -1,0 +1,306 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.learn-system.com/learning-package.schema.json",
+  "title": "Learning Package Schema",
+  "description": "Schema for sharing and importing learning packages",
+  "type": "object",
+  "required": ["version", "package_name", "author", "created_at", "goals", "courses", "cache"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "Schema version",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "package_name": {
+      "type": "string",
+      "description": "Name of the learning package",
+      "minLength": 1
+    },
+    "package_id": {
+      "type": "string",
+      "description": "Unique package identifier (for versioning)",
+      "pattern": "^[a-z0-9-]+$",
+      "default": ""
+    },
+    "author": {
+      "type": "string",
+      "description": "Package author",
+      "minLength": 1
+    },
+    "description": {
+      "type": "string",
+      "description": "Description of the learning package",
+      "default": ""
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date",
+      "description": "Creation date (YYYY-MM-DD)"
+    },
+    "updated_at": {
+      "type": ["string", "null"],
+      "format": "date",
+      "description": "Last update date (YYYY-MM-DD)",
+      "default": null
+    },
+    "tags": {
+      "type": "array",
+      "description": "Tags for categorization",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "license": {
+      "type": "string",
+      "description": "License for the package",
+      "default": "MIT"
+    },
+    "goals": {
+      "type": "object",
+      "description": "Learning goals included in the package",
+      "additionalProperties": {
+        "$ref": "goals.schema.json#/definitions/goal"
+      }
+    },
+    "courses": {
+      "type": "object",
+      "description": "Course definitions",
+      "additionalProperties": {
+        "$ref": "#/definitions/course_definition"
+      }
+    },
+    "cache": {
+      "type": "object",
+      "description": "Learning materials cache",
+      "additionalProperties": {
+        "$ref": "#/definitions/course_cache"
+      }
+    },
+    "bookmarks": {
+      "type": ["object", "null"],
+      "description": "Optional bookmarks (can be shared or excluded)",
+      "default": null,
+      "additionalProperties": {
+        "$ref": "bookmarks.schema.json#/definitions/bookmark"
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Additional package metadata",
+      "properties": {
+        "total_duration": {
+          "type": "string",
+          "description": "Estimated total learning duration",
+          "default": ""
+        },
+        "difficulty": {
+          "type": "string",
+          "enum": ["beginner", "intermediate", "advanced"],
+          "description": "Difficulty level",
+          "default": "intermediate"
+        },
+        "prerequisites": {
+          "type": "array",
+          "description": "Prerequisites for this package",
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        },
+        "learning_path": {
+          "type": "array",
+          "description": "Recommended learning path (order of courses)",
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        },
+        "resources": {
+          "type": "array",
+          "description": "External resources",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Resource name"
+              },
+              "url": {
+                "type": "string",
+                "format": "uri",
+                "description": "Resource URL"
+              },
+              "type": {
+                "type": "string",
+                "enum": ["documentation", "video", "article", "tutorial", "other"],
+                "description": "Resource type"
+              }
+            }
+          },
+          "default": []
+        }
+      }
+    }
+  },
+  "definitions": {
+    "course_definition": {
+      "type": "object",
+      "required": ["name", "description", "modules"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Course identifier (kebab-case)",
+          "pattern": "^[a-z0-9-]+$"
+        },
+        "display_name": {
+          "type": "string",
+          "description": "Human-readable course name",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string",
+          "description": "Course description",
+          "minLength": 1
+        },
+        "priority": {
+          "type": "string",
+          "enum": ["P0", "P1", "P2", "P3"],
+          "description": "Priority level",
+          "default": "P1"
+        },
+        "mode": {
+          "type": "string",
+          "enum": ["quick", "full", "both"],
+          "description": "Available learning modes",
+          "default": "both"
+        },
+        "estimated_duration": {
+          "type": "string",
+          "description": "Estimated learning duration",
+          "default": "1-2 weeks"
+        },
+        "difficulty": {
+          "type": "string",
+          "enum": ["beginner", "intermediate", "advanced"],
+          "description": "Difficulty level",
+          "default": "intermediate"
+        },
+        "modules": {
+          "type": "array",
+          "description": "List of modules in the course",
+          "items": {
+            "$ref": "#/definitions/module_definition"
+          }
+        },
+        "metadata": {
+          "type": "object",
+          "description": "Additional course metadata",
+          "properties": {
+            "stage": {
+              "type": "string",
+              "description": "Learning stage (e.g., '01-基础入门')",
+              "default": ""
+            },
+            "tags": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Tags for categorization"
+            }
+          }
+        }
+      }
+    },
+    "module_definition": {
+      "type": "object",
+      "required": ["name", "description"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Module identifier",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string",
+          "description": "Module description",
+          "minLength": 1
+        },
+        "estimated_duration": {
+          "type": "string",
+          "description": "Estimated duration",
+          "default": "1 day"
+        },
+        "resources": {
+          "type": "array",
+          "description": "Resources for this module",
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        },
+        "tasks": {
+          "type": "array",
+          "description": "Learning tasks for this module",
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        }
+      }
+    },
+    "course_cache": {
+      "type": "object",
+      "required": ["metadata"],
+      "properties": {
+        "metadata": {
+          "type": "object",
+          "required": ["version", "cache_date"],
+          "properties": {
+            "version": {
+              "type": "string",
+              "description": "Cache version"
+            },
+            "cache_date": {
+              "type": "string",
+              "format": "date",
+              "description": "Cache creation date (YYYY-MM-DD)"
+            },
+            "source_urls": {
+              "type": "array",
+              "description": "Source URLs for cached content",
+              "items": {
+                "type": "string",
+                "format": "uri"
+              },
+              "default": []
+            }
+          }
+        },
+        "files": {
+          "type": "object",
+          "description": "Cached content files",
+          "properties": {
+            "README.md": {
+              "type": "string",
+              "description": "Course README content"
+            },
+            "overview.md": {
+              "type": "string",
+              "description": "Course overview content"
+            },
+            "concepts.md": {
+              "type": "string",
+              "description": "Core concepts content"
+            },
+            "guides.md": {
+              "type": "string",
+              "description": "Usage guides content"
+            }
+          }
+        }
+      }
+    }
+  }
+}

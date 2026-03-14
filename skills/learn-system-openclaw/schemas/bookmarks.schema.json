@@ -1,0 +1,111 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.learn-system.com/bookmarks.schema.json",
+  "title": "Learning Bookmarks Schema",
+  "description": "Schema for learning bookmarks data structure",
+  "type": "object",
+  "required": ["version", "bookmarks"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "Schema version",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "bookmarks": {
+      "type": "object",
+      "description": "Map of bookmark ID to bookmark details",
+      "additionalProperties": {
+        "$ref": "#/definitions/bookmark"
+      }
+    }
+  },
+  "definitions": {
+    "bookmark": {
+      "type": "object",
+      "required": ["id", "title", "question", "status", "created_at"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the bookmark",
+          "pattern": "^bookmark-[0-9-]+$"
+        },
+        "title": {
+          "type": "string",
+          "description": "Title of the bookmark",
+          "minLength": 1
+        },
+        "course": {
+          "type": ["string", "null"],
+          "description": "Associated course name",
+          "default": null
+        },
+        "module": {
+          "type": ["string", "null"],
+          "description": "Source module within the course",
+          "default": null
+        },
+        "question": {
+          "type": "string",
+          "description": "Question or topic to explore",
+          "minLength": 1
+        },
+        "status": {
+          "type": "string",
+          "enum": ["exploring", "completed", "skipped"],
+          "description": "Bookmark status",
+          "default": "exploring"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date",
+          "description": "Creation date (YYYY-MM-DD)"
+        },
+        "completed_at": {
+          "type": ["string", "null"],
+          "format": "date",
+          "description": "Completion date (YYYY-MM-DD)",
+          "default": null
+        },
+        "exploration_goals": {
+          "type": "array",
+          "description": "List of exploration goals",
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        },
+        "exploration_notes": {
+          "type": "string",
+          "description": "Notes from exploration",
+          "default": ""
+        },
+        "return_criteria": {
+          "type": "array",
+          "description": "Criteria to consider bookmark complete",
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        },
+        "metadata": {
+          "type": "object",
+          "description": "Additional metadata",
+          "properties": {
+            "shareable": {
+              "type": "boolean",
+              "description": "Whether this bookmark can be shared",
+              "default": true
+            },
+            "tags": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Tags for categorization"
+            }
+          }
+        }
+      }
+    }
+  }
+}

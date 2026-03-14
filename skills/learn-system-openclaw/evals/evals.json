@@ -5,23 +5,23 @@
       "id": 1,
       "name": "create-new-learning-goal",
       "prompt": "我要学习 OpenClaw 技能开发，创建一个学习目标",
-      "expected_output": "成功创建学习目标，生成课程结构，创建 .learn-system/ 目录结构，包含 goals/, courses/, progress/ 等目录",
+      "expected_output": "成功创建学习目标，生成课程结构，创建 .learn-system/goals.json 文件",
       "files": [],
       "assertions": [
         {
-          "name": "directory_structure_created",
-          "description": "验证 .learn-system/ 目录结构被正确创建",
-          "check": "check_directory_structure"
+          "name": "directory_created",
+          "description": "验证 .learn-system/ 目录被创建",
+          "check": "check_directory_created"
         },
         {
-          "name": "goal_file_created",
-          "description": "验证学习目标文件被创建在 goals/active/ 目录下",
-          "check": "check_goal_file"
+          "name": "goals_file_created",
+          "description": "验证 .learn-system/goals.json 文件被创建",
+          "check": "check_goals_file_created"
         },
         {
-          "name": "course_structure_generated",
-          "description": "验证课程目录结构和文件被创建",
-          "check": "check_course_structure"
+          "name": "goal_structure_valid",
+          "description": "验证 goals.json 符合 JSON Schema",
+          "check": "check_goal_schema_valid"
         },
         {
           "name": "interactive_questions_asked",
@@ -34,7 +34,7 @@
       "id": 2,
       "name": "start-existing-course",
       "prompt": "我要学习 ai-tools-fundamentals 这门课程",
-      "expected_output": "识别为现有课程，路由到 module-manager，开始学习，更新进度状态",
+      "expected_output": "识别为现有课程，路由到 module-manager，开始学习，更新 progress.json",
       "files": [],
       "assertions": [
         {
@@ -48,9 +48,9 @@
           "check": "check_routing_to_module_manager"
         },
         {
-          "name": "learning_started",
-          "description": "验证学习状态被正确更新",
-          "check": "check_learning_status_updated"
+          "name": "progress_updated",
+          "description": "验证 progress.json 被创建或更新",
+          "check": "check_progress_updated"
         }
       ]
     },
@@ -82,18 +82,18 @@
       "id": 4,
       "name": "create-bookmark",
       "prompt": "创建一个书签，记录关于 Tool Use 机制的疑问",
-      "expected_output": "成功创建书签，保存到 bookmarks/ 目录，包含书签内容、时间戳等",
+      "expected_output": "成功创建书签，保存到 .learn-system/bookmarks.json",
       "files": [],
       "assertions": [
         {
-          "name": "bookmark_created",
-          "description": "验证书签文件被创建",
-          "check": "check_bookmark_created"
+          "name": "bookmarks_file_created",
+          "description": "验证 .learn-system/bookmarks.json 文件被创建",
+          "check": "check_bookmarks_file_created"
         },
         {
-          "name": "bookmark_content_saved",
-          "description": "验证书签内容被正确保存",
-          "check": "check_bookmark_content"
+          "name": "bookmark_structure_valid",
+          "description": "验证 bookmarks.json 符合 JSON Schema",
+          "check": "check_bookmark_schema_valid"
         },
         {
           "name": "tools_module_routed",
@@ -106,18 +106,18 @@
       "id": 5,
       "name": "refresh-cache",
       "prompt": "刷新 OpenClaw 的知识缓存",
-      "expected_output": "成功更新课程知识缓存，生成或更新 cache/ 目录下的缓存文件",
+      "expected_output": "成功更新课程知识缓存，生成或更新 .learn-system/cache/ 目录下的缓存文件",
       "files": [],
       "assertions": [
         {
-          "name": "cache_updated",
-          "description": "验证缓存文件被更新",
-          "check": "check_cache_updated"
+          "name": "cache_directory_exists",
+          "description": "验证 .learn-system/cache/ 目录存在",
+          "check": "check_cache_directory"
         },
         {
-          "name": "cache_directory_exists",
-          "description": "验证 cache/ 目录存在",
-          "check": "check_cache_directory"
+          "name": "cache_files_created",
+          "description": "验证缓存文件被创建",
+          "check": "check_cache_files_created"
         }
       ]
     },
@@ -125,7 +125,7 @@
       "id": 6,
       "name": "switch-learning-goal",
       "prompt": "切换学习目标到另一个",
-      "expected_output": "显示所有学习目标列表，允许用户选择并切换激活的目标，更新 active-goal.md",
+      "expected_output": "显示所有学习目标列表，允许用户选择并切换激活的目标，更新 goals.json 的 active_goal_id",
       "files": [],
       "assertions": [
         {
@@ -135,7 +135,7 @@
         },
         {
           "name": "active_goal_updated",
-          "description": "验证 active-goal.md 被更新",
+          "description": "验证 goals.json 的 active_goal_id 被更新",
           "check": "check_active_goal_updated"
         },
         {
@@ -149,18 +149,13 @@
       "id": 7,
       "name": "pause-resume-goal",
       "prompt": "暂停当前学习目标",
-      "expected_output": "将当前目标从 active/ 移动到 paused/，更新目标状态",
+      "expected_output": "将当前目标状态更新为 paused",
       "files": [],
       "assertions": [
         {
-          "name": "goal_paused",
-          "description": "验证目标状态被更新为暂停",
+          "name": "goal_status_paused",
+          "description": "验证目标状态被更新为 paused",
           "check": "check_goal_status_paused"
-        },
-        {
-          "name": "file_moved",
-          "description": "验证目标文件被移动到 paused/ 目录",
-          "check": "check_goal_file_moved"
         }
       ]
     },
@@ -187,12 +182,12 @@
       "id": 9,
       "name": "update-progress",
       "prompt": "更新当前学习进度，我已经完成了第一个模块",
-      "expected_output": "更新 progress/ 目录下的进度文件，标记第一个模块为已完成，计算总体进度百分比",
+      "expected_output": "更新 progress.json，标记第一个模块为已完成，计算总体进度百分比",
       "files": [],
       "assertions": [
         {
           "name": "progress_updated",
-          "description": "验证进度文件被更新",
+          "description": "验证 progress.json 被更新",
           "check": "check_progress_updated"
         },
         {
@@ -201,9 +196,9 @@
           "check": "check_module_completed"
         },
         {
-          "name": "status_module_routed",
-          "description": "验证请求被正确路由到 status 模块",
-          "check": "check_routing_to_status"
+          "name": "overall_progress_calculated",
+          "description": "验证总体进度百分比被计算",
+          "check": "check_overall_progress_calculated"
         }
       ]
     },
@@ -333,6 +328,88 @@
           "name": "no_empty_goal_created",
           "description": "验证没有创建空的目标",
           "check": "check_no_empty_goal_created"
+        }
+      ]
+    },
+    {
+      "id": 16,
+      "name": "export-learning-package",
+      "prompt": "导出我的学习包，包含所有的学习目标、进度和书签",
+      "expected_output": "成功导出学习包，生成符合 learning-package.schema.json 的 JSON 文件",
+      "files": [],
+      "assertions": [
+        {
+          "name": "package_file_created",
+          "description": "验证学习包文件被创建（*.learning-package.json）",
+          "check": "check_package_file_created"
+        },
+        {
+          "name": "package_schema_valid",
+          "description": "验证学习包符合 learning-package.schema.json",
+          "check": "check_package_schema_valid"
+        },
+        {
+          "name": "package_contains_goals",
+          "description": "验证学习包包含 goals 数据",
+          "check": "check_package_contains_goals"
+        },
+        {
+          "name": "package_contains_courses",
+          "description": "验证学习包包含 courses 数据",
+          "check": "check_package_contains_courses"
+        },
+        {
+          "name": "package_contains_cache",
+          "description": "验证学习包包含 cache 数据",
+          "check": "check_package_contains_cache"
+        }
+      ]
+    },
+    {
+      "id": 17,
+      "name": "import-learning-package",
+      "prompt": "导入这个学习包：openclaw-dev.learning-package.json",
+      "expected_output": "成功验证并导入学习包，创建或更新 goals.json、progress.json、bookmarks.json 和缓存文件",
+      "files": [],
+      "assertions": [
+        {
+          "name": "package_validated",
+          "description": "验证学习包符合 schema",
+          "check": "check_package_validated"
+        },
+        {
+          "name": "goals_imported",
+          "description": "验证 goals.json 被导入或更新",
+          "check": "check_goals_imported"
+        },
+        {
+          "name": "courses_imported",
+          "description": "验证课程缓存被导入",
+          "check": "check_courses_imported"
+        },
+        {
+          "name": "import_success_message",
+          "description": "验证显示导入成功信息",
+          "check": "check_import_success_message"
+        }
+      ]
+    },
+    {
+      "id": 18,
+      "name": "json-schema-validation",
+      "prompt": "验证 .learn-system/goals.json 是否符合 JSON Schema",
+      "expected_output": "验证 goals.json 是否符合 schemas/goals.schema.json",
+      "files": [],
+      "assertions": [
+        {
+          "name": "schema_validation_performed",
+          "description": "验证执行了 JSON Schema 验证",
+          "check": "check_schema_validation_performed"
+        },
+        {
+          "name": "validation_result_reported",
+          "description": "验证报告验证结果",
+          "check": "check_validation_result_reported"
         }
       ]
     }

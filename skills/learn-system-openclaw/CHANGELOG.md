@@ -7,6 +7,131 @@
 
 ---
 
+## [0.2.0] - 2026-03-14
+
+### 正式版发布 🎉
+
+**重要更新**：从测试版（0.2.0-test）升级为正式版（0.2.0），修复技能加载机制问题。
+
+#### ✅ 修复 (Fixed)
+
+- 🐛 **技能加载机制不稳定**
+  - 规范化文件名：`skill.md` → `SKILL.md`（符合 OpenClaw 技能标准）
+  - 确保 OpenClaw 能正确识别和加载技能
+  - 移除测试版标记，技能已稳定
+
+#### 🚀 改进 (Changed)
+
+- ⚡ **触发优化**
+  - 优化 SKILL.md frontmatter，添加更多触发关键词
+  - 增强描述的"pushy"程度，提高技能触发准确率
+  - 添加中英文双语触发关键词（"学习目标"、"学习计划"、"学习进度"、"learning goal"、"study plan"等）
+
+- 📝 **文档优化**
+  - 简化技能文档，移除过度强调的规则描述
+  - 保留核心规则，减少视觉干扰
+  - 优化内容结构，提升可读性
+
+#### 🎨 新功能 (Added)
+
+- ✨ **OpenClaw 特定配置**
+  - 添加 `metadata.openclaw` 配置到 SKILL.md frontmatter
+  - 支持技能 emoji（📚）
+  - 配置多平台支持（Linux, macOS, Windows）
+
+#### 📊 兼容性
+
+- ✅ 符合 OpenClaw v1.0.0 技能规范
+- ✅ 支持技能自动触发和加载
+- ✅ 无破坏性变更，兼容 0.2.0-test 数据
+
+---
+
+## [0.3.0] - 2026-03-14
+
+### JSON Schema 和学习包支持 🎉
+
+**重大功能**：添加 JSON Schema 验证和学习包导出/导入功能，支持学习内容分享。
+
+#### ✨ 新功能 (Added)
+
+- 📦 **学习包管理**
+  - 导出学习包：将学习目标、进度、书签、缓存打包为 JSON 文件
+  - 导入学习包：从 JSON 文件导入他人的学习内容
+  - 学习包格式：符合 learning-package.schema.json 标准
+
+- 🎯 **JSON Schema 验证**
+  - goals.schema.json：学习目标数据结构验证
+  - progress.schema.json：学习进度数据结构验证
+  - bookmarks.schema.json：书签数据结构验证
+  - learning-package.schema.json：学习包格式验证
+
+- 🚀 **增强的触发关键词**
+  - 添加"导出学习包"、"导入学习包"、"分享学习内容"等触发词
+  - 支持中英文双语关键词
+
+#### 🔧 变更 (Changed)
+
+- 📝 **文档更新**
+  - tools.md：添加学习包管理功能详细说明
+  - SKILL.md：更新意图识别和路由，添加学习包管理场景
+  - 新增 schemas/README.md：Schema 使用说明
+
+- 🧪 **测试用例更新**
+  - 更新 evals.json，匹配新的 JSON 文件结构
+  - 新增学习包导出/导入测试用例（ID: 16, 17）
+  - 新增 JSON Schema 验证测试用例（ID: 18）
+
+#### 📖 文档 (Documentation)
+
+- 📝 **新增文档**
+  - schemas/README.md：JSON Schema 使用指南
+  - schemas/goals.schema.json：学习目标 Schema
+  - schemas/progress.schema.json：学习进度 Schema
+  - schemas/bookmarks.schema.json：书签 Schema
+  - schemas/learning-package.schema.json：学习包 Schema
+
+#### 🎨 设计改进
+
+- 📦 **学习包结构**
+  - 支持完整包（目标 + 进度 + 书签 + 缓存）
+  - 支持部分导出（仅课程内容、仅学习进度等）
+  - 支持合并导入（避免覆盖现有数据）
+
+- 🔐 **元数据支持**
+  - 所有数据结构支持 metadata 字段
+  - 支持作者、标签、分享设置等
+  - 支持版本控制和更新追踪
+
+#### 🚀 改进 (Improved)
+
+- ✅ **数据完整性**：通过 JSON Schema 确保数据结构正确
+- ✅ **可分享性**：学习包格式支持跨平台分享
+- ✅ **可扩展性**：Schema 支持未来扩展字段
+- ✅ **向后兼容**：v0.2.0 数据可直接使用，无需迁移
+
+#### 📊 兼容性
+
+- ✅ 向后兼容 v0.2.0 数据结构
+- ✅ 新增功能不影响现有功能
+- ✅ Schema 版本独立于技能版本
+
+#### 🎯 使用示例
+
+**导出学习包**：
+```
+用户：导出我的学习包
+系统：生成 openclaw-dev.learning-package.json
+```
+
+**导入学习包**：
+```
+用户：导入这个学习包：friend-package.learning-package.json
+系统：验证并导入学习内容
+```
+
+---
+
 ## [0.2.0-test] - 2026-03-14
 
 ### 测试版发布 ⚠️

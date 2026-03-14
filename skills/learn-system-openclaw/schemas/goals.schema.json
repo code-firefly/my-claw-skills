@@ -1,0 +1,127 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.learn-system.com/goals.schema.json",
+  "title": "Learning Goals Schema",
+  "description": "Schema for learning goals data structure",
+  "type": "object",
+  "required": ["version", "goals"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "Schema version",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "active_goal_id": {
+      "type": ["string", "null"],
+      "description": "ID of the currently active learning goal",
+      "default": null
+    },
+    "goals": {
+      "type": "object",
+      "description": "Map of goal ID to goal details",
+      "additionalProperties": {
+        "$ref": "#/definitions/goal"
+      }
+    }
+  },
+  "definitions": {
+    "goal": {
+      "type": "object",
+      "required": ["id", "name", "status", "type", "created_at", "priority"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the goal",
+          "pattern": "^learn-[a-z0-9-]+$"
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the learning goal",
+          "minLength": 1
+        },
+        "status": {
+          "type": "string",
+          "enum": ["active", "paused", "completed", "archived"],
+          "description": "Current status of the goal"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["theory", "practice", "mixed"],
+          "description": "Type of learning goal"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date",
+          "description": "Creation date (YYYY-MM-DD)"
+        },
+        "completed_at": {
+          "type": ["string", "null"],
+          "format": "date",
+          "description": "Completion date (YYYY-MM-DD)",
+          "default": null
+        },
+        "description": {
+          "type": "string",
+          "description": "Detailed description of the goal",
+          "default": ""
+        },
+        "priority": {
+          "type": "string",
+          "enum": ["P0", "P1", "P2", "P3"],
+          "description": "Priority level",
+          "default": "P1"
+        },
+        "course_name": {
+          "type": ["string", "null"],
+          "description": "Associated course name",
+          "default": null
+        },
+        "learning_purpose": {
+          "type": "string",
+          "enum": ["work", "interest", "project", "other"],
+          "description": "Learning purpose",
+          "default": "interest"
+        },
+        "knowledge_level": {
+          "type": "string",
+          "enum": ["beginner", "intermediate", "advanced"],
+          "description": "Current knowledge level",
+          "default": "beginner"
+        },
+        "expected_duration": {
+          "type": "string",
+          "description": "Expected learning duration",
+          "default": "1-2 weeks"
+        },
+        "learning_focus": {
+          "type": "string",
+          "enum": ["theory", "practice", "balanced"],
+          "description": "Learning focus area",
+          "default": "balanced"
+        },
+        "metadata": {
+          "type": "object",
+          "description": "Additional metadata",
+          "properties": {
+            "author": {
+              "type": "string",
+              "description": "Author of the goal"
+            },
+            "tags": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Tags for categorization"
+            },
+            "shareable": {
+              "type": "boolean",
+              "description": "Whether this goal can be shared",
+              "default": true
+            }
+          }
+        }
+      }
+    }
+  }
+}

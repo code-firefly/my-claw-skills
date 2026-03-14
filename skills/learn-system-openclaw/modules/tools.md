@@ -415,6 +415,271 @@ exec: mkdir -p .learn-system/cache/<course-name>
 
 ---
 
+## 📦 学习包管理 (Learning Package)
+
+> **分享和导入学习内容**
+
+### 导出学习包
+
+#### 触发方式
+
+- "导出学习包"
+- "保存学习包"
+- "备份学习数据"
+- "分享学习内容"
+- "export learning package"
+
+#### 执行步骤
+
+**步骤 1**：读取所有学习数据
+
+```bash
+# 读取核心数据
+read: .learn-system/goals.json
+read: .learn-system/progress.json
+read: .learn-system/bookmarks.json
+
+# 读取缓存索引
+read: .learn-system/cache/.metadata.json
+
+# 读取课程缓存内容
+read: .learn-system/cache/<course-name>/README.md
+read: .learn-system/cache/<course-name>/overview.md
+read: .learn-system/cache/<course-name>/concepts.md
+read: .learn-system/cache/<course-name>/guides.md
+```
+
+**步骤 2**：询问导出选项
+
+```
+═════════════════════════════════════════════════════
+📦 导出学习包选项
+
+请选择导出内容：
+  1. 完整包（目标 + 进度 + 书签 + 缓存）
+  2. 仅课程内容（目标定义 + 课程缓存）
+  3. 仅学习进度（不包含缓存）
+  4. 自定义（选择要包含的内容）
+
+导出格式：
+  1. JSON 单文件（*.learning-package.json）
+  2. JSON + 压缩包（learning-package.zip）
+
+你的选择：[等待用户输入]
+═════════════════════════════════════════════════════
+```
+
+**步骤 3**：生成学习包
+
+根据用户选择，生成符合 `learning-package.schema.json` 的 JSON 文件：
+
+```json
+{
+  "version": "1.0.0",
+  "package_name": "OpenClaw Development Learning",
+  "package_id": "openclaw-dev-20260314-001",
+  "author": "your-name",
+  "description": "Complete learning package for OpenClaw skill development",
+  "created_at": "2026-03-14",
+  "tags": ["openclaw", "skill-development"],
+  "goals": { ... },
+  "courses": { ... },
+  "cache": { ... },
+  "bookmarks": { ... }
+}
+```
+
+**步骤 4**：验证包
+
+验证生成的 JSON 是否符合 `learning-package.schema.json`：
+
+```bash
+# 使用 schema 验证
+ajv validate -s schemas/learning-package.schema.json -d output.learning-package.json
+```
+
+**步骤 5**：保存文件
+
+```bash
+# 保存为 JSON 文件
+write: <package-name>.learning-package.json
+
+# 如果选择压缩包
+exec: zip learning-package.zip <package-name>.learning-package.json
+```
+
+**步骤 6**：显示成功信息
+
+```
+✅ 学习包已导出
+
+文件：<package-name>.learning-package.json
+大小：XX KB
+位置：./
+
+包含内容：
+• 2 个学习目标
+• 3 个课程
+• 5 个书签
+• 完整缓存内容
+
+分享提示：
+• 可以直接分享 *.learning-package.json 文件
+• 他人可使用"导入学习包"功能导入
+```
+
+---
+
+### 导入学习包
+
+#### 触发方式
+
+- "导入学习包"
+- "加载学习包"
+- "安装学习包"
+- "import learning package"
+- "使用学习包"
+
+#### 执行步骤
+
+**步骤 1**：询问学习包来源
+
+```
+═════════════════════════════════════════════════════
+📦 导入学习包
+
+请提供学习包：
+  1. 从文件导入（*.learning-package.json）
+  2. 从 URL 下载导入
+  3. 从剪贴板导入
+
+你的选择：[等待用户输入]
+═════════════════════════════════════════════════════
+```
+
+**步骤 2**：读取学习包
+
+根据用户选择读取学习包：
+
+```bash
+# 从文件读取
+read: <package-name>.learning-package.json
+
+# 从 URL 下载
+exec: curl -O https://example.com/<package-name>.learning-package.json
+
+# 从剪贴板读取（用户粘贴）
+```
+
+**步骤 3**：验证学习包
+
+验证导入的 JSON 是否符合 `learning-package.schema.json`：
+
+```bash
+# 使用 schema 验证
+ajv validate -s schemas/learning-package.schema.json -d <package-name>.learning-package.json
+```
+
+如果验证失败，显示错误并停止：
+
+```
+❌ 学习包验证失败
+
+错误：...
+位置：...
+原因：...
+
+请检查学习包文件是否完整或联系包作者。
+```
+
+**步骤 4**：显示包预览
+
+```
+╔═════════════════════════════════════════════════════╗
+║              学习包预览                           ║
+╠═══════════════════════════════════════════════════╣
+║ 包名称：OpenClaw Development Learning            ║
+║ 作者：your-name                                     ║
+║ 创建日期：2026-03-14                                ║
+║ 描述：Complete learning package for...            ║
+╠═══════════════════════════════════════════════════╣
+║ 包含内容：                                            ║
+║   • 2 个学习目标                                      ║
+║   • 3 个课程（带缓存）                               ║
+║   • 5 个书签                                         ║
+╠═══════════════════════════════════════════════════╣
+║ 导入选项：                                            ║
+║   1. 完整导入（替换现有数据）                         ║
+║   2. 合并导入（保留现有数据）                         ║
+║   3. 仅导入课程（不导入目标）                         ║
+║   4. 查看详细内容                                     ║
+╠═════════════════════════════════════════════════════╣
+║ 确认导入？(y/n)                                    ║
+╚═════════════════════════════════════════════════════╝
+```
+
+**步骤 5**：执行导入
+
+根据用户选择执行导入：
+
+##### 选项 1：完整导入
+
+```bash
+# 导入目标
+write: .learn-system/goals.json
+
+# 导入进度（可选）
+write: .learn-system/progress.json
+
+# 导入书签（可选）
+write: .learn-system/bookmarks.json
+
+# 导入课程缓存
+exec: mkdir -p .learn-system/cache/<course-name>
+write: .learn-system/cache/<course-name>/README.md
+write: .learn-system/cache/<course-name>/overview.md
+write: .learn-system/cache/<course-name>/concepts.md
+write: .learn-system/cache/<course-name>/guides.md
+
+# 更新缓存索引
+write: .learn-system/cache/.metadata.json
+```
+
+##### 选项 2：合并导入
+
+```bash
+# 读取现有数据
+read: .learn-system/goals.json
+read: .learn-system/progress.json
+read: .learn-system/bookmarks.json
+
+# 合并数据（避免重复）
+# 使用 package_id 检测重复
+
+# 写回合并后的数据
+write: .learn-system/goals.json
+write: .learn-system/progress.json
+write: .learn-system/bookmarks.json
+```
+
+**步骤 6**：显示导入结果
+
+```
+✅ 学习包已导入
+
+导入内容：
+• 2 个学习目标
+• 3 个课程（含缓存）
+• 5 个书签
+
+下一步：
+• 使用"查看学习状态"查看导入的内容
+• 使用"开始学习"开始学习课程
+• 使用"切换学习目标"选择目标
+```
+
+---
+
 ## 🔧 课程管理
 
 ### 新增课程
