@@ -4,7 +4,7 @@
 
 ## 🚨 强制性路径规则 ⚠️
 
-**必须**使用 `.learning/` 作为根目录。
+**必须**使用 `.learn-system/` 作为根目录。
 
 **禁止**：
 - 使用任何其他路径
@@ -29,10 +29,10 @@ AI 引导用户创建个性化学习目标并生成课程结构。
 
 ```bash
 # 步骤 1：确保目录存在
-exec: mkdir -p .learning
+exec: mkdir -p .learn-system
 
 # 步骤 2：读取现有目标（如果文件存在）
-read: .learning/goals.json
+read: .learn-system/goals.json
 ```
 
 **禁止**：跳过以上任何步骤。
@@ -217,7 +217,7 @@ GOAL_ID="learn-$(echo $TOPIC | tr '[:upper:]' ' '-').$(date +%s)"
 ### 读取现有数据
 
 ```bash
-read: .learning/goals.json
+read: .learn-system/goals.json
 ```
 
 ### 解析 JSON
@@ -249,7 +249,7 @@ read: .learning/goals.json
 ### 写回文件
 
 ```bash
-write: .learning/goals.json
+write: .learn-system/goals.json
 ```
 
 **重要**：必须完整替换文件内容，不得追加或部分修改。
@@ -278,7 +278,7 @@ ID：learn-docker-1234567890
 
 ### 通用注意事项
 
-1. **路径强制**：必须使用 `.learning/goals.json`，不得使用其他路径
+1. **路径强制**：必须使用 `.learn-system/goals.json`，不得使用其他路径
 2. **用户确认**：创建目标前必须显示预览并等待用户确认
 3. **日期格式**：统一使用 YYYY-MM-DD 格式
 4. **错误处理**：如果 JSON 解析失败，报告明确错误并停止

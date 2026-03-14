@@ -4,7 +4,7 @@
 
 ## 🚨 强制性路径规则 ⚠️
 
-**必须**使用 `.learning/` 作为根目录。
+**必须**使用 `.learn-system/` 作为根目录。
 
 **禁止**：
 - 使用任何其他路径
@@ -40,10 +40,10 @@
 
 ```bash
 # 步骤 1：确保目录存在
-exec: mkdir -p .learning
+exec: mkdir -p .learn-system
 
 # 步骤 2：读取现有书签（如果文件存在）
-read: .learning/bookmarks.json
+read: .learn-system/bookmarks.json
 ```
 
 **禁止**：跳过以上任何步骤。
@@ -54,7 +54,7 @@ read: .learning/bookmarks.json
 
 #### 执行步骤
 
-**步骤 1**：读取 `.learning/bookmarks.json`
+**步骤 1**：读取 `.learn-system/bookmarks.json`
 
 ```json
 {
@@ -99,7 +99,7 @@ BOOKMARK_ID="bookmark-$(date +%s)-${RANDOM}"
 ╚═══════════════════════════════════════════════════╝
 ```
 
-**步骤 5**：用户确认后，写入 `.learning/bookmarks.json`
+**步骤 5**：用户确认后，写入 `.learn-system/bookmarks.json`
 
 ```json
 {
@@ -129,7 +129,7 @@ BOOKMARK_ID="bookmark-$(date +%s)-${RANDOM}"
 ```
 
 **重要**：
-- 必须使用 `write` 工具完整替换 `.learning/bookmarks.json` 文件
+- 必须使用 `write` 工具完整替换 `.learn-system/bookmarks.json` 文件
 - 不得追加或修改部分内容
 
 ---
@@ -138,7 +138,7 @@ BOOKMARK_ID="bookmark-$(date +%s)-${RANDOM}"
 
 #### 执行步骤
 
-**步骤 1**：读取 `.learning/bookmarks.json`
+**步骤 1**：读取 `.learn-system/bookmarks.json`
 
 **步骤 2**：筛选书签
 
@@ -188,7 +188,7 @@ BOOKMARK_ID="bookmark-$(date +%s)-${RANDOM}"
 
 #### 执行步骤
 
-**步骤 1**：读取 `.learning/bookmarks.json`
+**步骤 1**：读取 `.learn-system/bookmarks.json`
 
 **步骤 2**：定位书签
 
@@ -251,7 +251,7 @@ BOOKMARK_ID="bookmark-$(date +%s)-${RANDOM}"
 
 用户必须输入完整书签名称或 ID 确认。
 
-**步骤 3**：从 `.learning/bookmarks.json` 中移除书签
+**步骤 3**：从 `.learn-system/bookmarks.json` 中移除书签
 
 读取、修改、写回 JSON 文件。
 
@@ -263,11 +263,11 @@ BOOKMARK_ID="bookmark-$(date +%s)-${RANDOM}"
 
 ```bash
 # 步骤 1：确保目录存在
-exec: mkdir -p .learning
-exec: mkdir -p .learning/cache
+exec: mkdir -p .learn-system
+exec: mkdir -p .learn-system/cache
 
 # 步骤 2：读取缓存索引（如果文件存在）
-read: .learning/cache/.metadata.json
+read: .learn-system/cache/.metadata.json
 ```
 
 **禁止**：跳过以上任何步骤。
@@ -299,7 +299,7 @@ read: .learning/cache/.metadata.json
 **步骤 3**：创建课程知识缓存目录
 
 ```bash
-exec: mkdir -p .learning/cache/<course-name>
+exec: mkdir -p .learn-system/cache/<course-name>
 ```
 
 **步骤 4**：结构化存储到缓存文件
@@ -312,7 +312,7 @@ exec: mkdir -p .learning/cache/<course-name>
 
 **步骤 5**：更新缓存索引
 
-更新 `.learning/cache/.metadata.json`：
+更新 `.learn-system/cache/.metadata.json`：
 
 ```json
 {
@@ -336,7 +336,7 @@ exec: mkdir -p .learning/cache/<course-name>
 课程：<course-name>
 缓存日期：2026-03-13
 文件数：4 个
-位置：.learning/cache/<course-name>/
+位置：.learn-system/cache/<course-name>/
 ```
 
 ---
@@ -359,7 +359,7 @@ exec: mkdir -p .learning/cache/<course-name>
 
 **步骤 1**：显示当前缓存状态
 
-从 `.learning/cache/.metadata.json` 读取并显示。
+从 `.learn-system/cache/.metadata.json` 读取并显示。
 
 **步骤 2**：询问更新范围
 
@@ -398,7 +398,7 @@ exec: mkdir -p .learning/cache/<course-name>
 
 #### 执行步骤
 
-**步骤 1**：读取 `.learning/cache/.metadata.json`
+**步骤 1**：读取 `.learn-system/cache/.metadata.json`
 
 **步骤 2**：显示缓存状态表
 
@@ -410,7 +410,7 @@ exec: mkdir -p .learning/cache/<course-name>
 | ai-tools-fundamentals | 2026-03-07 | 4 | ✅ 完整 |
 | mcp-protocol | 2026-03-08 | 3 | ✅ 完整 |
 
-缓存目录：.learning/cache/
+缓存目录：.learn-system/cache/
 ```
 
 ---
@@ -461,16 +461,16 @@ exec: mkdir -p .learning/cache/<course-name>
 
 ```bash
 # 创建课程目录
-exec: mkdir -p .learning/cache/<course-name>
+exec: mkdir -p .learn-system/cache/<course-name>
 
 # 生成课程文件
-write: .learning/cache/<course-name>/README.md
-write: .learning/cache/<course-name>/overview.md
-write: .learning/cache/<course-name>/concepts.md
-write: .learning/cache/<course-name>/guides.md
+write: .learn-system/cache/<course-name>/README.md
+write: .learn-system/cache/<course-name>/overview.md
+write: .learn-system/cache/<course-name>/concepts.md
+write: .learn-system/cache/<course-name>/guides.md
 ```
 
-**步骤 4**：更新 `.learning/cache/.metadata.json`
+**步骤 4**：更新 `.learn-system/cache/.metadata.json`
 
 ---
 
@@ -531,10 +531,10 @@ write: .learning/cache/<course-name>/guides.md
 
 ```bash
 # 删除课程目录
-exec: rm -rf .learning/cache/<course-name>
+exec: rm -rf .learn-system/cache/<course-name>
 
 # 从缓存索引移除
-# 读取、修改、写回 .learning/cache/.metadata.json
+# 读取、修改、写回 .learn-system/cache/.metadata.json
 ```
 
 ---
@@ -675,10 +675,10 @@ https://code.claude.com/docs
 
 ### 通用注意事项
 
-1. **路径强制**：必须使用 `.learning/` 作为所有路径的前缀
+1. **路径强制**：必须使用 `.learn-system/` 作为所有路径的前缀
 2. **用户确认**：修改多个文件前，总是先显示预览并等待用户确认
 3. **日期格式**：统一使用 YYYY-MM-DD 格式
-4. **文件路径**：所有路径使用相对路径（`.learning/`），避免绝对路径或 `~`
+4. **文件路径**：所有路径使用相对路径（`.learn-system/`），避免绝对路径或 `~`
 
 ### 书签相关
 
@@ -693,8 +693,8 @@ https://code.claude.com/docs
 
 ### 课程管理
 
-- 所有课程缓存都在 `.learning/cache/` 目录下
-- 课程元数据在 `.learning/cache/.metadata.json` 中维护
+- 所有课程缓存都在 `.learn-system/cache/` 目录下
+- 课程元数据在 `.learn-system/cache/.metadata.json` 中维护
 
 ---
 

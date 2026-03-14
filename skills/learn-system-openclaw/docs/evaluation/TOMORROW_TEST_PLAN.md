@@ -10,7 +10,7 @@
 ### 核心验证目标
 
 1. **验证路径控制 100% 有效**
-   - 所有文件操作都必须使用 `.learning/` 前缀
+   - 所有文件操作都必须使用 `.learn-system/` 前缀
    - 模型不得使用其他路径
    - 验证强制性规则被模型遵守
 
@@ -44,12 +44,12 @@
 
 | 测试 | 预期结果 | 验证方法 |
 |------|---------|----------|
-| 创建书签 A | 保存到 `.learning/bookmarks.json` | 检查文件路径 |
-| 创建书签 B | 保存到 `.learning/bookmarks.json` | 检查文件路径 |
-| 创建目标 A | 保存到 `.learning/goals.json` | 检查文件路径 |
-| 创建目标 B | 保存到 `.learning/goals.json` | 检查文件路径 |
-| 查看状态 | 读取 `.learning/progress.json` | 检查文件路径 |
-| 更新进度 | 更新 `.learning/progress.json` | 检查文件路径 |
+| 创建书签 A | 保存到 `.learn-system/bookmarks.json` | 检查文件路径 |
+| 创建书签 B | 保存到 `.learn-system/bookmarks.json` | 检查文件路径 |
+| 创建目标 A | 保存到 `.learn-system/goals.json` | 检查文件路径 |
+| 创建目标 B | 保存到 `.learn-system/goals.json` | 检查文件路径 |
+| 查看状态 | 读取 `.learn-system/progress.json` | 检查文件路径 |
+| 更新进度 | 更新 `.learn-system/progress.json` | 检查文件路径 |
 
 ---
 
@@ -88,16 +88,16 @@
 
 | 测试 | 输入 | 预期结果 |
 |------|------|----------|
-| 创建学习目标 | "我要学 X" | 创建成功，保存在 `.learning/goals.json` |
-| 查看学习目标 | "查看学习目标" | 显示所有目标，从 `.learning/goals.json` 读取 |
-| 创建书签 | "创建书签 Y" | 创建成功，保存在 `.learning/bookmarks.json` |
-| 查看书签 | "查看我的书签" | 显示所有书签，从 `.learning/bookmarks.json` 读取 |
-| 查看学习状态 | "查看学习状态" | 显示状态，从 `.learning/progress.json` 读取 |
-| 更新进度 | "更新进度，完成模块 A" | 更新成功，更新 `.learning/progress.json` |
-| 完成书签 | "完成书签 Z" | 更新成功，更新 `.learning/bookmarks.json` |
-| 切换目标 | "切换学习目标" | 切换成功，更新 `.learning/goals.json` |
-| 暂停目标 | "暂停学习目标" | 暂停成功，更新 `.learning/goals.json` |
-| 恢复目标 | "恢复学习目标" | 恢复成功，更新 `.learning/goals.json` |
+| 创建学习目标 | "我要学 X" | 创建成功，保存在 `.learn-system/goals.json` |
+| 查看学习目标 | "查看学习目标" | 显示所有目标，从 `.learn-system/goals.json` 读取 |
+| 创建书签 | "创建书签 Y" | 创建成功，保存在 `.learn-system/bookmarks.json` |
+| 查看书签 | "查看我的书签" | 显示所有书签，从 `.learn-system/bookmarks.json` 读取 |
+| 查看学习状态 | "查看学习状态" | 显示状态，从 `.learn-system/progress.json` 读取 |
+| 更新进度 | "更新进度，完成模块 A" | 更新成功，更新 `.learn-system/progress.json` |
+| 完成书签 | "完成书签 Z" | 更新成功，更新 `.learn-system/bookmarks.json` |
+| 切换目标 | "切换学习目标" | 切换成功，更新 `.learn-system/goals.json` |
+| 暂停目标 | "暂停学习目标" | 暂停成功，更新 `.learn-system/goals.json` |
+| 恢复目标 | "恢复学习目标" | 恢复成功，更新 `.learn-system/goals.json` |
 
 ---
 
@@ -174,7 +174,7 @@
 
 ### 路径控制
 
-- ✅ 所有文件操作都使用 `.learning/` 前缀
+- ✅ 所有文件操作都使用 `.learn-system/` 前缀
 - ✅ 没有任何文件在其他位置创建
 - ✅ 模型严格遵守强制性规则
 
@@ -202,7 +202,7 @@
 ### 测试环境
 
 - ✅ 版本：v0.2.0（开发版本）
-- ✅ 目录：`.learning/` 项目级管理
+- ✅ 目录：`.learn-system/` 项目级管理
 - ✅ 结构：JSON 简化数据结构
 - ✅ 规则：强制性路径控制
 

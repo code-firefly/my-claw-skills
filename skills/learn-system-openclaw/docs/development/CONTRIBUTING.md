@@ -122,9 +122,9 @@ PR 描述应包含：
 1. 更新 `VERSION` 文件
 2. 更新 `CHANGELOG.md`
 3. 更新 `metadata.json` 中的版本号
-4. 提交更改 (`git commit -m "chore: release v1.0.0"`)
-5. 创建 Git tag (`git tag v1.0.0`)
-6. 推送 tag (`git push origin v1.0.0`)
+4. 提交更改 (`git commit -m "chore: release v0.2.0-test"`)
+5. 创建 Git tag (`git tag v0.2.0-test`)
+6. 推送 tag (`git push origin v0.2.0-test`)
 7. GitHub Actions 会自动发布到 ClawHub
 
 ---

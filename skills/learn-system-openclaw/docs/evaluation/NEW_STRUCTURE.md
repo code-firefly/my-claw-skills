@@ -14,18 +14,18 @@
 
 ```
 <workspace>/
-└── .learning/              # 项目级学习数据根目录
+└── .learn-system/              # 项目级学习数据根目录
 ```
 
 **说明**：
-- 使用 `.learning/` 作为相对根目录（相对于项目根）
+- 使用 `.learn-system/` 作为相对根目录（相对于项目根）
 - 避免全局 `~/.learn-system/` 的路径控制问题
 - 每个项目独立管理学习数据
 
 ### 子目录结构
 
 ```
-.learning/
+.learn-system/
 ├── goals.json          # 所有学习目标（JSON）
 ├── progress.json       # 所有课程进度（JSON）
 ├── bookmarks.json     # 所有书签（JSON）
@@ -212,20 +212,20 @@ cache/
 
 ### 基础路径
 
-所有路径**必须**使用 `.learning/` 作为根目录（相对于项目根）。
+所有路径**必须**使用 `.learn-system/` 作为根目录（相对于项目根）。
 
 ### 相对路径示例
 
 | 功能 | 旧路径（v1.0） | 新路径（v2.0） |
 |------|------------------|----------------|
-| 读取目标 | `.learn-system/goals/active/xxx.md` | `.learning/goals.json` |
-| 创建书签 | `.learn-system/bookmarks/LEARNING_BOOKMARKS.md` | `.learning/bookmarks.json` |
-| 读取进度 | `.learn-system/progress/PROGRESS.md` | `.learning/progress.json` |
-| 课程缓存 | `.learn-system/cache/<course>/xxx.md` | `.learning/cache/<course>/xxx.md` |
+| 读取目标 | `.learn-system/goals/active/xxx.md` | `.learn-system/goals.json` |
+| 创建书签 | `.learn-system/bookmarks/LEARNING_BOOKMARKS.md` | `.learn-system/bookmarks.json` |
+| 读取进度 | `.learn-system/progress/PROGRESS.md` | `.learn-system/progress.json` |
+| 课程缓存 | `.learn-system/cache/<course>/xxx.md` | `.learn-system/cache/<course>/xxx.md` |
 
 ### 强制性规则
 
-- ✅ **必须**：使用 `.learning/` 作为所有路径的前缀
+- ✅ **必须**：使用 `.learn-system/` 作为所有路径的前缀
 - ❌ **禁止**：使用任何其他路径或让模型自主决定
 - ✅ **必须**：文件操作前先创建目录
 - ✅ **必须**：使用相对路径（非绝对路径）
@@ -254,7 +254,7 @@ cache/
 ### v2.0 结构的优势
 
 1. **路径控制有效**
-   - 使用简单的相对路径 `.learning/`
+   - 使用简单的相对路径 `.learn-system/`
    - JSON 格式，单一文件操作
    - 易于验证和测试
 

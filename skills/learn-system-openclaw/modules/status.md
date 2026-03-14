@@ -4,7 +4,7 @@
 
 ## 🚨 强制性路径规则 ⚠️
 
-**必须**使用 `.learning/` 作为根目录。
+**必须**使用 `.learn-system/` 作为根目录。
 
 **禁止**：
 - 使用任何其他路径
@@ -31,10 +31,10 @@
 
 ```bash
 # 步骤 1：确保目录存在
-exec: mkdir -p .learning
+exec: mkdir -p .learn-system
 
 # 步骤 2：读取现有数据（如果文件存在）
-read: .learning/progress.json
+read: .learn-system/progress.json
 ```
 
 **禁止**：跳过以上任何步骤。
@@ -45,9 +45,9 @@ read: .learning/progress.json
 
 ### 执行步骤
 
-**步骤 1**：读取 `.learning/goals.json`
+**步骤 1**：读取 `.learn-system/goals.json`
 
-**步骤 2**：读取 `.learning/progress.json`
+**步骤 2**：读取 `.learn-system/progress.json`
 
 **步骤 3**：显示学习状态总览
 
@@ -87,7 +87,7 @@ read: .learning/progress.json
 
 ### 执行步骤
 
-**步骤 1**：读取 `.learning/progress.json`
+**步骤 1**：读取 `.learn-system/progress.json`
 
 **步骤 2**：解析用户输入，提取模块名称和完成状态
 
@@ -95,7 +95,7 @@ read: .learning/progress.json
 
 **步骤 4**：重新计算总体进度
 
-**步骤 5**：写回 `.learning/progress.json`
+**步骤 5**：写回 `.learn-system/progress.json`
 
 **步骤 6**：显示更新结果
 
@@ -114,7 +114,7 @@ read: .learning/progress.json
 
 ### 通用注意事项
 
-1. **路径强制**：必须使用 `.learning/` 前缀
+1. **路径强制**：必须使用 `.learn-system/` 前缀
 2. **JSON 操作**：读取、解析、修改、写回 JSON 文件
 3. **错误处理**：如果 JSON 解析失败，报告明确错误
 4. **日期格式**：统一使用 YYYY-MM-DD 格式
@@ -122,10 +122,10 @@ read: .learning/progress.json
 ### 路径注意事项
 
 **必须遵守**：
-- ✅ 书签文件：`.learning/bookmarks.json`
-- ✅ 进度文件：`.learning/progress.json`
-- ✅ 目标文件：`.learning/goals.json`
-- ✅ 缓存目录：`.learning/cache/`
+- ✅ 书签文件：`.learn-system/bookmarks.json`
+- ✅ 进度文件：`.learn-system/progress.json`
+- ✅ 目标文件：`.learn-system/goals.json`
+- ✅ 缓存目录：`.learn-system/cache/`
 - ❌ 禁止：使用任何其他路径
 
 ### JSON 操作注意事项

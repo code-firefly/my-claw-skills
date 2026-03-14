@@ -13,7 +13,7 @@ subskills:
 
 > 本技能提供完整的学习管理功能，包括目标创建、课程学习、进度追踪、书签管理和知识缓存。
 
-**重要变更**：v0.2.0 采用项目级目录管理（`.learning/`），简化路径控制，增加强制性规则，确保路径 100% 有效。
+**重要变更**：v0.2.0 采用项目级目录管理（`.learn-system/`），简化路径控制，增加强制性规则，确保路径 100% 有效。
 
 ---
 
@@ -23,13 +23,13 @@ subskills:
 
 ### 路径规则
 
-- **必须使用**：`.learning/` 作为根目录（相对于项目根）
+- **必须使用**：`.learn-system/` 作为根目录（相对于项目根）
 - **禁止**：使用任何其他路径或让模型自主决定文件位置
 - **要求**：任何文件操作前必须先检查目录是否存在
 
 ### 创建目录
 
-- **必须**：创建文件前先使用 `exec mkdir -p .learning/<subdir>`
+- **必须**：创建文件前先使用 `exec mkdir -p .learn-system/<subdir>`
 - **禁止**：假设目录已存在或跳过创建
 
 ### 错误处理
@@ -52,12 +52,12 @@ exec: mkdir -p .learning
 
 **检查目录创建成功**：
 ```bash
-exec: ls -la .learning/
+exec: ls -la .learn-system/
 ```
 
 **如果失败或目录不存在，必须报错并停止**：
 ```
-❌ 错误：无法创建 .learning/ 目录
+❌ 错误：无法创建 .learn-system/ 目录
 请检查权限或磁盘空间
 ```
 
@@ -69,16 +69,16 @@ exec: ls -la .learning/
 
 ```bash
 # 书签操作前
-exec: mkdir -p .learning/cache
+exec: mkdir -p .learn-system/cache
 
 # 缓存操作前
-exec: mkdir -p .learning/cache
+exec: mkdir -p .learn-system/cache
 
 # 进度操作前
-exec: mkdir -p .learning/cache
+exec: mkdir -p .learn-system/cache
 
 # 课程缓存操作前
-exec: mkdir -p .learning/cache/<course-name>
+exec: mkdir -p .learn-system/cache/<course-name>
 ```
 
 **禁止**：跳过以上任何步骤或使用其他路径。
@@ -90,11 +90,11 @@ exec: mkdir -p .learning/cache/<course-name>
 **在开始任何操作前，必须验证目录结构**：
 
 ```bash
-exec: ls -la .learning/
+exec: ls -la .learn-system/
 ```
 
 **必须验证以下内容**：
-- [ ] `.learning/` 目录存在
+- [ ] `.learn-system/` 目录存在
 - [ ] `cache/` 子目录存在（如果需要）
 - [ ] 目录权限正确（drwxr-xr-x）
 - [ ] 没有其他异常文件
@@ -102,7 +102,7 @@ exec: ls -la .learning/
 **如果验证失败，必须报错并停止**：
 ```
 ❌ 错误：目录结构验证失败
-期望结构：.learning/cache/
+期望结构：.learn-system/cache/
 实际结构：<实际 ls 结果>
 ```
 
@@ -110,11 +110,11 @@ exec: ls -la .learning/
 
 ## 📁 目录结构
 
-本技能使用 `.learning/` 作为根目录，避免与其他技能冲突：
+本技能使用 `.learn-system/` 作为根目录，避免与其他技能冲突：
 
 ```
 <workspace>/
-└── .learning/              # 项目级学习数据根目录
+└── .learn-system/              # 项目级学习数据根目录
     ├── goals.json          # 所有学习目标（JSON）
     ├── progress.json       # 所有课程进度（JSON）
     ├── bookmarks.json     # 所有书签（JSON）
@@ -129,7 +129,7 @@ exec: ls -la .learning/
 ```
 
 **重要**：
-- 使用 `.learning/` 作为所有路径的前缀
+- 使用 `.learn-system/` 作为所有路径的前缀
 - 避免使用绝对路径或 `~` 符号
 - 所有文件操作都必须先创建目录
 
@@ -149,15 +149,15 @@ exec: ls -la .learning/
 
 ### 2. 禁止跳过目录创建
 
-- ❌ 假设 `.learning/` 目录已存在
-- ❌ 跳过 `exec mkdir -p .learning/<subdir>`
+- ❌ 假设 `.learn-system/` 目录已存在
+- ❌ 跳过 `exec mkdir -p .learn-system/<subdir>`
 - ❌ 直接使用 `write` 或 `echo` 创建文件（必须先创建目录）
 
 ### 3. 禁止自主决定路径
 
 - ❌ 让模型自主决定文件保存位置
-- ❌ 使用任何非 `.learning/` 前缀的路径
-- ❌ 询问用户"保存到哪"（必须使用 `.learning/`）
+- ❌ 使用任何非 `.learn-system/` 前缀的路径
+- ❌ 询问用户"保存到哪"（必须使用 `.learn-system/`）
 
 ### 4. 禁止使用旧的目录结构
 
@@ -174,8 +174,8 @@ exec: ls -la .learning/
 
 ```bash
 # ✅ 正确：先创建目录，再写入文件
-exec: mkdir -p .learning/cache/<course-name>
-exec: cat > .learning/cache/<course-name>/README.md << 'EOF'
+exec: mkdir -p .learn-system/cache/<course-name>
+exec: cat > .learn-system/cache/<course-name>/README.md << 'EOF'
 课程缓存内容
 EOF
 ```
@@ -184,7 +184,7 @@ EOF
 
 ```bash
 # ❌ 错误：直接写入，没有创建目录
-exec: cat > .learning/cache/<course-name>/README.md << 'EOF'
+exec: cat > .learn-system/cache/<course-name>/README.md << 'EOF'
 课程缓存内容
 EOF
 
@@ -204,9 +204,9 @@ EOF
 在执行任何文件操作（创建、读取、写入、更新）之前，**必须**确认：
 
 - [ ] 已执行 `exec: mkdir -p .learning`
-- [ ] 已验证 `.learning/` 目录存在
+- [ ] 已验证 `.learn-system/` 目录存在
 - [ ] 已验证子目录存在（如果需要）
-- [ ] 使用 `.learning/` 前缀的路径
+- [ ] 使用 `.learn-system/` 前缀的路径
 - [ ] 没有使用绝对路径或 `~` 符号
 
 ### 如果检查失败
@@ -266,14 +266,14 @@ EOF
 
 ### 项目隔离
 
-每个项目有独立的 `.learning/` 目录，不同项目的学习数据互不干扰。
+每个项目有独立的 `.learn-system/` 目录，不同项目的学习数据互不干扰。
 
 ### 推荐工作流
 
 1. 在项目根目录使用技能
-2. 所有学习数据保存在 `.learning/` 目录
+2. 所有学习数据保存在 `.learn-system/` 目录
 3. 使用 JSON 文件管理数据
-4. 缓存保存在 `.learning/cache/` 目录
+4. 缓存保存在 `.learn-system/cache/` 目录
 
 ### 语义匹配
 
@@ -372,7 +372,7 @@ EOF
 ### v0.2.0 (2026-03-13)
 
 **重大变更**：
-- 从全局目录（`~/.learn-system/`）切换为项目级目录（`.learning/`）
+- 从全局目录（`~/.learn-system/`）切换为项目级目录（`.learn-system/`）
 - 简化文件结构，使用 JSON 格式替代多目录结构
 - 增加强制性规则，确保路径控制 100% 有效
 - 优化子模块实现，简化逻辑

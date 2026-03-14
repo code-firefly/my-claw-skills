@@ -34,7 +34,7 @@
 #### 新设计（推荐）
 
 ```
-.learning/              # 项目级学习数据（相对于项目根）
+.learn-system/              # 项目级学习数据（相对于项目根）
 ├── goals.json        # 所有学习目标（JSON）
 ├── progress.json     # 所有课程进度（JSON）
 ├── bookmarks.json   # 所有书签（JSON）
@@ -73,12 +73,12 @@
 以下规则**必须严格遵守**，违反将被视为技能执行失败：
 
 ### 路径规则
-- **必须使用**：`.learning/` 作为根目录（相对于项目根）
+- **必须使用**：`.learn-system/` 作为根目录（相对于项目根）
 - **禁止**：使用任何其他路径或自主决定文件位置
 - **要求**：任何文件操作前必须先检查目录是否存在
 
 ### 创建目录
-- **必须**：创建文件前先使用 `exec mkdir -p .learning/<subdir>`
+- **必须**：创建文件前先使用 `exec mkdir -p .learn-system/<subdir>`
 - **禁止**：假设目录已存在或跳过创建
 
 ### 错误处理
@@ -102,15 +102,15 @@ exec: mkdir -p .learning
 
 ### 步骤 2：确保子目录存在
 ```bash
-exec: mkdir -p .learning/bookmarks
-exec: mkdir -p .learning/progress
-exec: mkdir -p .learning/cache
-exec: mkdir -p .learning/goals
+exec: mkdir -p .learn-system/bookmarks
+exec: mkdir -p .learn-system/progress
+exec: mkdir -p .learn-system/cache
+exec: mkdir -p .learn-system/goals
 ```
 
 ### 步骤 3：验证目录结构
 ```bash
-exec: ls -la .learning/
+exec: ls -la .learn-system/
 ```
 
 **禁止**：跳过以上任何步骤或使用其他路径。
@@ -124,11 +124,11 @@ exec: ls -la .learning/
 ## 强制性路径规则 ⚠️
 
 本模块的所有文件操作**必须使用**：
-- 基础路径：`.learning/`
-- 书签路径：`.learning/bookmarks/`
-- 缓存路径：`.learning/cache/`
-- 进度路径：`.learning/progress/`
-- 目标路径：`.learning/goals/`
+- 基础路径：`.learn-system/`
+- 书签路径：`.learn-system/bookmarks/`
+- 缓存路径：`.learn-system/cache/`
+- 进度路径：`.learn-system/progress/`
+- 目标路径：`.learn-system/goals/`
 
 **违反规则将导致技能执行失败。**
 ```
@@ -222,7 +222,7 @@ exec: ls -la .learning/
 ## 🎯 成功标准
 
 ### 功能标准
-- [ ] 所有文件操作都使用 `.learning/` 相对路径
+- [ ] 所有文件操作都使用 `.learn-system/` 相对路径
 - [ ] 路径控制 100% 有效（模型不自主决定路径）
 - [ ] 所有强制性规则被模型遵守
 - [ ] 书签、缓存、目标、进度功能正常工作

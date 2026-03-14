@@ -4,7 +4,7 @@
 
 ## 🚨 强制性路径规则 ⚠️
 
-**必须**使用 `.learning/` 作为根目录。
+**必须**使用 `.learn-system/` 作为根目录。
 
 **禁止**：
 - 使用任何其他路径
@@ -29,7 +29,7 @@
 
 ## 🚨 强制性路径规则 ⚠️
 
-**必须**使用 `.learning/` 作为根目录。
+**必须**使用 `.learn-system/` 作为根目录。
 
 **禁止**：
 - 使用任何其他路径
@@ -41,10 +41,10 @@
 
 ```bash
 # 步骤 1：确保目录存在
-exec: mkdir -p .learning
+exec: mkdir -p .learn-system
 
 # 步骤 2：读取进度文件
-read: .learning/progress.json
+read: .learn-system/progress.json
 ```
 
 **禁止**：跳过以上任何步骤。
@@ -55,11 +55,11 @@ read: .learning/progress.json
 
 ### 执行步骤
 
-**步骤 1**：读取 `.learning/progress.json`
+**步骤 1**：读取 `.learn-system/progress.json`
 
 **步骤 2**：检查课程是否存在
 
-从 `.learning/cache/.metadata.json` 读取缓存列表。
+从 `.learn-system/cache/.metadata.json` 读取缓存列表。
 
 **步骤 3**：验证课程状态
 
@@ -87,13 +87,13 @@ read: .learning/progress.json
 ║ 开始日期：2026-03-13                                   ║
 ╠═════════════════════════════════════════════════════╣
 ║ 将要更新：                                             ║
-║   ✓ .learning/progress.json                           ║
+║   ✓ .learn-system/progress.json                           ║
 ╠═════════════════════════════════════════════════════╣
 ║ 确认开始学习？(y/n)                                    ║
 ╚═════════════════════════════════════════════════════╝
 ```
 
-**步骤 6**：用户确认后，更新 `.learning/progress.json`
+**步骤 6**：用户确认后，更新 `.learn-system/progress.json`
 
 ```json
 {
@@ -124,7 +124,7 @@ read: .learning/progress.json
 
 ### 执行步骤
 
-**步骤 1**：读取 `.learning/progress.json`
+**步骤 1**：读取 `.learn-system/progress.json`
 
 **步骤 2**：显示完成预览
 
@@ -138,13 +138,13 @@ read: .learning/progress.json
 ║ 完成日期：2026-03-16                                   ║
 ╠═════════════════════════════════════════════════════╣
 ║ 将要更新：                                             ║
-║   ✓ .learning/progress.json                           ║
+║   ✓ .learn-system/progress.json                           ║
 ╠═════════════════════════════════════════════════════╣
 ║ 确认完成学习？(y/n)                                ║
 ╚═════════════════════════════════════════════════════╝
 ```
 
-**步骤 3**：用户确认后，更新 `.learning/progress.json`
+**步骤 3**：用户确认后，更新 `.learn-system/progress.json`
 
 ```json
 {
@@ -175,7 +175,7 @@ read: .learning/progress.json
 
 ### 执行步骤
 
-**步骤 1**：读取 `.learning/progress.json`
+**步骤 1**：读取 `.learn-system/progress.json`
 
 **步骤 2**：显示重置警告
 
@@ -196,10 +196,10 @@ read: .learning/progress.json
 
 ### 通用注意事项
 
-1. **路径强制**：必须使用 `.learning/progress.json`，不得使用其他路径
+1. **路径强制**：必须使用 `.learn-system/progress.json`，不得使用其他路径
 2. **用户确认**：修改多个文件前，总是先显示预览并等待用户确认
 3. **日期格式**：统一使用 YYYY-MM-DD 格式
-4. **文件路径**：所有路径使用相对路径（`.learning/`），避免绝对路径或 `~`
+4. **文件路径**：所有路径使用相对路径（`.learn-system/`），避免绝对路径或 `~`
 
 ### JSON 操作注意事项
 

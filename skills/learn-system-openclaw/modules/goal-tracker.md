@@ -4,7 +4,7 @@
 
 ## 🚨 强制性路径规则 ⚠️
 
-**必须**使用 `.learning/` 作为根目录。
+**必须**使用 `.learn-system/` 作为根目录。
 
 **禁止**：
 - 使用任何其他路径
@@ -35,10 +35,10 @@
 
 ```bash
 # 步骤 1：确保目录存在
-exec: mkdir -p .learning
+exec: mkdir -p .learn-system
 
 # 步骤 2：读取目标文件
-read: .learning/goals.json
+read: .learn-system/goals.json
 ```
 
 **禁止**：跳过以上任何步骤。
@@ -49,7 +49,7 @@ read: .learning/goals.json
 
 ### 执行步骤
 
-**步骤 1**：读取 `.learning/goals.json`
+**步骤 1**：读取 `.learn-system/goals.json`
 
 **步骤 2**：显示所有目标
 
@@ -95,7 +95,7 @@ read: .learning/goals.json
 
 ### 执行步骤
 
-**步骤 1**：读取 `.learning/goals.json`
+**步骤 1**：读取 `.learn-system/goals.json`
 
 **步骤 2**：显示所有学习目标列表
 
@@ -119,7 +119,7 @@ read: .learning/goals.json
 }
 ```
 
-**步骤 5**：写回 `.learning/goals.json`
+**步骤 5**：写回 `.learn-system/goals.json`
 
 **步骤 6**：显示切换结果
 
@@ -136,7 +136,7 @@ read: .learning/goals.json
 
 ### 执行步骤
 
-**步骤 1**：读取 `.learning/goals.json`
+**步骤 1**：读取 `.learn-system/goals.json`
 
 **步骤 2**：显示暂停警告
 
@@ -155,7 +155,7 @@ read: .learning/goals.json
 
 **步骤 5**：更新 `active_goal_id` 为 `null`
 
-**步骤 6**：写回 `.learning/goals.json`
+**步骤 6**：写回 `.learn-system/goals.json`
 
 **步骤 7**：显示暂停结果
 
@@ -172,7 +172,7 @@ read: .learning/goals.json
 
 ### 执行步骤
 
-**步骤 1**：读取 `.learning/goals.json`
+**步骤 1**：读取 `.learn-system/goals.json`
 
 **步骤 2**：选择要恢复的目标
 
@@ -180,7 +180,7 @@ read: .learning/goals.json
 
 **步骤 4**：更新 `active_goal_id`
 
-**步骤 5**：写回 `.learning/goals.json`
+**步骤 5**：写回 `.learn-system/goals.json`
 
 **步骤 6**：显示恢复结果
 
@@ -197,7 +197,7 @@ read: .learning/goals.json
 
 ### 执行步骤
 
-**步骤 1**：读取 `.learning/goals.json`
+**步骤 1**：读取 `.learn-system/goals.json`
 
 **步骤 2**：选择要归档的目标
 
@@ -205,7 +205,7 @@ read: .learning/goals.json
 
 **步骤 4**：更新 `active_goal_id`（如果是激活目标）
 
-**步骤 5**：写回 `.learning/goals.json`
+**步骤 5**：写回 `.learn-system/goals.json`
 
 **步骤 6**：显示归档结果
 
@@ -222,7 +222,7 @@ read: .learning/goals.json
 
 ### 执行步骤
 
-**步骤 1**：读取 `.learning/goals.json`
+**步骤 1**：读取 `.learn-system/goals.json`
 
 **步骤 2**：选择要完成的目标
 
@@ -232,7 +232,7 @@ read: .learning/goals.json
 
 **步骤 5**：更新 `active_goal_id`（如果是激活目标）
 
-**步骤 6**：写回 `.learning/goals.json`
+**步骤 6**：写回 `.learn-system/goals.json`
 
 **步骤 7**：显示完成结果
 
@@ -250,7 +250,7 @@ read: .learning/goals.json
 
 ### 通用注意事项
 
-1. **路径强制**：必须使用 `.learning/goals.json`，不得使用其他路径
+1. **路径强制**：必须使用 `.learn-system/goals.json`，不得使用其他路径
 2. **用户确认**：切换/暂停/恢复/归档/完成操作前，总是先显示预览并等待用户确认
 3. **日期格式**：统一使用 YYYY-MM-DD 格式
 4. **错误处理**：如果 JSON 解析失败，报告明确错误并停止
