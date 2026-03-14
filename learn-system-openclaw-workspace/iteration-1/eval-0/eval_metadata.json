@@ -1,0 +1,6 @@
+{
+  "eval_id": 0,
+  "eval_name": "create-learning-goal",
+  "prompt": "我要学习 Docker 容器技术，帮我创建一个学习目标",
+  "assertions": []
+}

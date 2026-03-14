@@ -1,0 +1,33 @@
+{
+  "skill_name": "learn-system-openclaw",
+  "evals": [
+    {
+      "id": 1,
+      "name": "create-learning-goal",
+      "prompt": "我要学习 Docker 容器技术，帮我创建一个学习目标",
+      "expected_output": "创建一个名为 '学习 Docker 容器技术' 的学习目标，保存到 .learn-system/goals.json",
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "view-learning-progress",
+      "prompt": "我现在的学习进度怎么样？",
+      "expected_output": "显示当前所有学习目标的状态和进度",
+      "files": []
+    },
+    {
+      "id": 3,
+      "name": "create-bookmark",
+      "prompt": "帮我记一下这个知识点，方便以后回顾：Docker 镜像和容器的区别是什么？",
+      "expected_output": "创建一个学习书签，保存到 .learn-system/bookmarks.json",
+      "files": []
+    },
+    {
+      "id": 4,
+      "name": "export-learning-package",
+      "prompt": "把我的学习内容导出成一个包分享给朋友",
+      "expected_output": "导出学习包，包含目标、进度、书签和缓存",
+      "files": []
+    }
+  ]
+}

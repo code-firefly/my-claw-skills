@@ -1,0 +1,6 @@
+{
+  "eval_id": 2,
+  "eval_name": "create-bookmark",
+  "prompt": "帮我记一下这个知识点，方便以后回顾：Docker 镜像和容器的区别是什么？",
+  "assertions": []
+}
