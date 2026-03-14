@@ -6,18 +6,45 @@ description: 创建、修改和测试 OpenClaw 技能，优化技能性能和描
 # Skill Creator (OpenClaw Optimized)
 
 > **⚠️ OpenClaw 兼容性说明**：
-> 本技能是从 Claude Code 的 `skill-creator` 修改而来，已针对 OpenClaw 进行简化。
+> 本技能是从 Claude Code 的 `skill-creator` 修改而来，已针对 OpenClaw 进行适配。
 >
 > **主要变更**：
-> - ✅ 移除了评测功能（依赖 `sessions_spawn`）
-> - ✅ 保留了手动测试指南（通过用户反馈改进）
-> - ✅ 保留了 Description 优化功能（手动方式）
+> - ✅ 评测功能使用 OpenClaw 的 `sessions_spawn`（runtime="acp"）代替 Claude Code 的 `claude -p`
+> - ✅ 支持通过 `sessions_spawn` 创建独立的评测会话
+> - ✅ 保留了 Description 优化功能
 > - ✅ 改为中文文档（顶部添加注意事项）
 >
-> **OpenClaw 限制**：
-> - OpenClaw 没有 ACP harness（`sessions_spawn`）
-> - OpenClaw 使用 `/subagents spawn` 来运行子任务
-> - 建议用户直接在会话中测试技能，或使用 OpenClaw 的子智能体功能（`/subagents spawn`）
+> **前置条件**：
+> 1. **ACP 已启用**：检查 ACP 配置是否启用
+>    ```bash
+>    openclaw config get acp
+>    ```
+>    确保 `"enabled": true`
+>
+> 2. **默认 Agent 配置**：查看默认使用的 agent
+>    ```bash
+>    openclaw config get acp.defaultAgent
+>    ```
+>    通常是 `claude`。如果需要使用其他 agent（如 `skill-manager`），需将其添加到 `acp.allowedAgents`：
+>    ```bash
+>    openclaw config set acp.allowedAgents '["pi","claude","codex","opencode","gemini","kimi","skill-manager"]'
+>    ```
+>
+> 3. **允许的 Agents**：查看当前允许的 agent 列表
+>    ```bash
+>    openclaw config get acp.allowedAgents
+>    ```
+>
+> **OpenClaw 评测支持**：
+> - OpenClaw 支持 ACP harness，通过 `sessions_spawn` 创建子会话
+> - 支持指定 `agentId`（默认使用配置中的 `acp.defaultAgent`，通常是 `claude`）
+> - 支持线程绑定的持久会话（`thread: true, mode: "session"`）
+> - 支持一次性运行（`mode: "run"`）或持久会话
+>
+> **评测脚本适配**：
+> - 原始评测脚本（run_eval.py）基于 `claude -p`，需要适配 OpenClaw
+> - 可以使用 `sessions_spawn` 工具创建评测会话
+> - 建议创建 OpenClaw 特定的评测脚本（run_eval_openclaw.py）
 
 **原始版本**：`skill-creator` (Universal AgentSkills 格式)
 
@@ -336,6 +363,184 @@ After writing to skill draft, come up with 2-3 realistic test prompts — to kin
 Save test cases to `evals/evals.json`. Don't write assertions yet — just to prompts. You'll draft assertions in to next step while to runs are in progress.
 
 See `references/schemas.md` for to full schema (including to `assertions` field, which you'll add later).
+
+---
+
+## Running Evaluations with OpenClaw
+
+OpenClaw provides `sessions_spawn` to create isolated sub-sessions for evaluation. This is different from Claude Code's `claude -p` approach.
+
+### Using sessions_spawn for Eval
+
+You can spawn a sub-session with the skill loaded to run test cases:
+
+```python
+# Example: Spawn a sub-session to test a skill
+# This is done via the sessions_spawn tool, not via a Python script
+sessions_spawn(
+    task="Use the my-skill to process this request",
+    runtime="acp",  # Use ACP harness
+    agentId="claude",  # Optional: specify agent (uses acp.defaultAgent if omitted)
+    mode="run",  # One-shot execution
+    timeoutSeconds=300
+)
+```
+
+**Key differences from Claude Code:**
+- OpenClaw uses the `sessions_spawn` tool directly (no CLI command equivalent to `claude -p`)
+- Eval sessions are created within the current OpenClaw session
+- Results come back as agent responses, not CLI output
+- Transcript can be retrieved via `sessions_history`
+
+### OpenClaw Eval Workflow
+
+1. **Create test directory structure:**
+   ```
+   eval-results/
+   ├── iteration-1/
+   │   ├── baseline/
+   │   │   └── test_001/
+   │   │       ├── transcript.md
+   │   │       └── outputs/
+   │   └── with_skill/
+   │       └── test_001/
+   │           ├── transcript.md
+   │           └── outputs/
+   ```
+
+2. **Spawn eval sessions:**
+   For each test case, spawn a sub-session with or without the skill:
+
+   ```json
+   // evals/evals.json
+   {
+     "skill_name": "my-skill",
+     "evals": [
+       {
+         "id": 1,
+         "prompt": "Process this file",
+         "expected_output": "CSV file with processed data",
+         "files": ["input.xlsx"],
+         "should_trigger": true
+       }
+     ]
+   }
+   ```
+
+3. **Run grader:**
+   Use the grader agent to evaluate outputs:
+   ```bash
+   python scripts/run_eval_openclaw.py \
+     --eval-set evals/evals.json \
+     --skill-path . \
+     --output-dir eval-results/iteration-1
+   ```
+
+### Creating OpenClaw Eval Scripts
+
+The original `run_eval.py` is designed for Claude Code's `claude -p`. For OpenClaw, use the new `run_eval_openclaw.py` script that:
+
+1. Prepares the directory structure for evaluations
+2. Generates instructions for the agent to spawn sessions
+3. Provides grader instructions for evaluation
+
+### Using run_eval_openclaw.py
+
+The OpenClaw eval workflow is a 3-step process:
+
+**Step 1: Prepare eval structure**
+```bash
+python scripts/run_eval_openclaw.py \
+  --prepare \
+  --eval-set evals/evals.json \
+  --output-dir eval-results/iteration-1
+```
+
+This creates the directory structure with baseline/ and with_skill/ directories for each test case.
+
+**Step 2: Spawn evaluation sessions**
+
+Generate spawn instructions:
+```bash
+python scripts/run_eval_openclaw.py \
+  --action spawn-instructions \
+  --eval-set evals/evals.json \
+  --output-dir eval-results/iteration-1 \
+  --variant with_skill
+```
+
+Then send the generated instructions to an agent with `sessions_spawn` access. The agent will:
+- For each test case, spawn a sub-session using `sessions_spawn`
+- Run the prompt with or without the skill
+- Save the transcript and outputs to the appropriate directory
+
+Example spawn call (done by the agent):
+```
+sessions_spawn(
+    task="Process this file",
+    runtime="acp",
+    agentId="claude",
+    mode="run",
+    timeoutSeconds=300,
+    cwd="eval-results/iteration-1/with_skill/test_001"
+)
+```
+
+**Step 3: Grade the results**
+
+Generate grader instructions:
+```bash
+python scripts/run_eval_openclaw.py \
+  --action grade-instructions \
+  --eval-set evals/evals.json \
+  --output-dir eval-results/iteration-1
+```
+
+Send the grader instructions to an agent that will:
+- Load the eval set expectations
+- Compare outputs against expectations
+- Generate grading.json for each test case
+- Provide feedback on assertion quality
+
+### Manual Eval Process
+
+If you prefer a simpler approach without the script:
+
+1. **Create test directories manually:**
+   ```bash
+   mkdir -p eval-results/iteration-1/baseline/test_001/outputs
+   mkdir -p eval-results/iteration-1/with_skill/test_001/outputs
+   ```
+
+2. **Manually spawn sub-sessions** for each test case using `sessions_spawn`
+
+3. **Run the grader** to evaluate:
+   ```bash
+   sessions_spawn(
+       task="Evaluate the outputs in eval-results/iteration-1/test_001/outputs against the expectations in evals/evals.json",
+       runtime="acp",
+       agentId="claude"
+   )
+   ```
+
+4. **Iterate** based on grader feedback
+
+### Manual Eval Process
+
+If you prefer a simpler approach without automation:
+
+1. **Manually test each prompt** by sending it to OpenClaw with the skill loaded
+2. **Save the transcript** and outputs to a structured directory
+3. **Run the grader** to evaluate against expectations:
+   ```bash
+   # Use sessions_spawn to run the grader
+   sessions_spawn(
+       task="Evaluate the outputs in eval-results/iteration-1/test_001/outputs against the expectations in evals/evals.json",
+       runtime="acp",
+       agentId="claude"
+   )
+   ```
+4. **Iterate** based on grader feedback
 
 ---
 
