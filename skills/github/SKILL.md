@@ -1,6 +1,6 @@
 ---
 name: github
-description: "Interact with GitHub using the `gh` CLI. Use `gh issue`, `gh pr`, `gh run`, and `gh api` for issues, PRs, CI runs, and advanced queries."
+description: "使用 gh CLI 与 GitHub 交互。支持管理 issue、PR、CI 工作流，以及高级 API 查询。适用于创建 issue、查看 PR 状态、检查 CI 运行结果、查询仓库信息等场景。Interact with GitHub using the `gh` CLI. Use `gh issue`, `gh pr`, `gh run`, and `gh api` for issues, PRs, CI runs, and advanced queries."
 ---
 
 # GitHub Skill

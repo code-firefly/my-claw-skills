@@ -31,7 +31,7 @@ OpenClaw uses workspace-based prompt injection combined with event-driven hooks.
 ### 1. Install the Skill
 
 ```bash
-clawhub install self-improving-agent
+clawdhub install self-improving-agent
 ```
 
 Or copy manually:
