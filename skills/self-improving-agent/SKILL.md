@@ -4,96 +4,96 @@ description: "捕获学习内容、错误和纠正，实现持续改进。适用
 metadata:
 ---
 
-# Self-Improvement Skill
+# 持续改进技能 (Self-Improvement Skill)
 
-Log learnings and errors to markdown files for continuous improvement. Coding agents can later process these into fixes, and important learnings get promoted to project memory.
+将学习内容和错误记录到 Markdown 文件，实现持续改进。编码代理（coding agents）可以后续处理这些内容为修复，重要的学习内容会被提升到项目记忆（project memory）中。
 
-## Quick Reference
+## 快速参考 (Quick Reference)
 
-| Situation | Action |
+| 情境 (Situation) | 操作 (Action) |
 |-----------|--------|
-| Command/operation fails | Log to `.learnings/ERRORS.md` |
-| User corrects you | Log to `.learnings/LEARNINGS.md` with category `correction` |
-| User wants missing feature | Log to `.learnings/FEATURE_REQUESTS.md` |
-| API/external tool fails | Log to `.learnings/ERRORS.md` with integration details |
-| Knowledge was outdated | Log to `.learnings/LEARNINGS.md` with category `knowledge_gap` |
-| Found better approach | Log to `.learnings/LEARNINGS.md` with category `best_practice` |
-| Simplify/Harden recurring patterns | Log/update `.learnings/LEARNINGS.md` with `Source: simplify-and-harden` and a stable `Pattern-Key` |
-| Similar to existing entry | Link with `**See Also**`, consider priority bump |
-| Broadly applicable learning | Promote to `CLAUDE.md`, `AGENTS.md`, and/or `.github/copilot-instructions.md` |
-| Workflow improvements | Promote to `AGENTS.md` (OpenClaw workspace) |
-| Tool gotchas | Promote to `TOOLS.md` (OpenClaw workspace) |
-| Behavioral patterns | Promote to `SOUL.md` (OpenClaw workspace) |
+| 命令/操作失败 (Command/operation fails) | 记录到 `.learnings/ERRORS.md` |
+| 用户纠正你 (User corrects you) | 记录到 `.learnings/LEARNINGS.md`，分类为 `correction` |
+| 用户想要缺失的功能 (User wants missing feature) | 记录到 `.learnings/FEATURE_REQUESTS.md` |
+| API/外部工具失败 (API/external tool fails) | 记录到 `.learnings/ERRORS.md`，包含集成细节 |
+| 知识过时 (Knowledge was outdated) | 记录到 `.learnings/LEARNINGS.md`，分类为 `knowledge_gap` |
+| 发现更好的方法 (Found better approach) | 记录到 `.learnings/LEARNINGS.md`，分类为 `best_practice` |
+| 简化/固化重复模式 (Simplify/Harden recurring patterns) | 记录/更新 `.learnings/LEARNINGS.md`，添加 `Source: simplify-and-harden` 和稳定的 `Pattern-Key` |
+| 与现有条目相似 (Similar to existing entry) | 使用 `**See Also**` 链接，考虑提升优先级 |
+| 广泛适用的学习 (Broadly applicable learning) | 提升到 `CLAUDE.md`、`AGENTS.md` 和/或 `.github/copilot-instructions.md` |
+| 工作流改进 (Workflow improvements) | 提升到 `AGENTS.md`（OpenClaw 工作空间） |
+| 工具陷阱 (Tool gotchas) | 提升到 `TOOLS.md`（OpenClaw 工作空间） |
+| 行为模式 (Behavioral patterns) | 提升到 `SOUL.md`（OpenClaw 工作空间） |
 
-## OpenClaw Setup (Recommended)
+## OpenClaw 设置（推荐）(OpenClaw Setup - Recommended)
 
-OpenClaw is the primary platform for this skill. It uses workspace-based prompt injection with automatic skill loading.
+OpenClaw 是此技能的主要平台。它使用基于工作空间的提示注入（workspace-based prompt injection）和自动技能加载（automatic skill loading）。
 
-### Installation
+### 安装 (Installation)
 
-**Via ClawdHub (recommended):**
+**通过 ClawdHub（推荐）:**
 ```bash
 clawdhub install self-improving-agent
 ```
 
-**Manual:**
+**手动安装:**
 ```bash
 git clone https://github.com/peterskoett/self-improving-agent.git ~/.openclaw/skills/self-improving-agent
 ```
 
-Remade for openclaw from original repo : https://github.com/pskoett/pskoett-ai-skills - https://github.com/pskoett/pskoett-ai-skills/tree/main/skills/self-improvement
+从原始仓库改编为 OpenClaw 版本：https://github.com/pskoett/pskoett-ai-skills - https://github.com/pskoett/pskoett-ai-skills/tree/main/skills/self-improvement
 
-### Workspace Structure
+### 工作空间结构 (Workspace Structure)
 
-OpenClaw injects these files into every session:
+OpenClaw 将这些文件注入到每个会话（session）中：
 
 ```
 ~/.openclaw/workspace/
-├── AGENTS.md          # Multi-agent workflows, delegation patterns
-├── SOUL.md            # Behavioral guidelines, personality, principles
-├── TOOLS.md           # Tool capabilities, integration gotchas
-├── MEMORY.md          # Long-term memory (main session only)
-├── memory/            # Daily memory files
+├── AGENTS.md          # 多代理工作流、委托模式 (Multi-agent workflows, delegation patterns)
+├── SOUL.md            # 行为指导、个性、原则 (Behavioral guidelines, personality, principles)
+├── TOOLS.md           # 工具能力、集成陷阱 (Tool capabilities, integration gotchas)
+├── MEMORY.md          # 长期记忆（仅主会话）(Long-term memory - main session only)
+├── memory/            # 每日记忆文件 (Daily memory files)
 │   └── YYYY-MM-DD.md
-└── .learnings/        # This skill's log files
+└── .learnings/        # 此技能的日志文件 (This skill's log files)
     ├── LEARNINGS.md
     ├── ERRORS.md
     └── FEATURE_REQUESTS.md
 ```
 
-### Create Learning Files
+### 创建学习文件 (Create Learning Files)
 
 ```bash
 mkdir -p ~/.openclaw/workspace/.learnings
 ```
 
-Then create the log files (or copy from `assets/`):
-- `LEARNINGS.md` — corrections, knowledge gaps, best practices
-- `ERRORS.md` — command failures, exceptions
-- `FEATURE_REQUESTS.md` — user-requested capabilities
+然后创建日志文件（或从 `assets/` 复制）：
+- `LEARNINGS.md` — 纠正、知识差距、最佳实践
+- `ERRORS.md` — 命令失败、异常
+- `FEATURE_REQUESTS.md` — 用户请求的能力
 
-### Promotion Targets
+### 提升目标 (Promotion Targets)
 
-When learnings prove broadly applicable, promote them to workspace files:
+当学习内容被证明广泛适用时，将它们提升到工作空间文件：
 
-| Learning Type | Promote To | Example |
+| 学习类型 (Learning Type) | 提升到 (Promote To) | 示例 (Example) |
 |---------------|------------|---------|
-| Behavioral patterns | `SOUL.md` | "Be concise, avoid disclaimers" |
-| Workflow improvements | `AGENTS.md` | "Spawn sub-agents for long tasks" |
-| Tool gotchas | `TOOLS.md` | "Git push needs auth configured first" |
+| 行为模式 (Behavioral patterns) | `SOUL.md` | "Be concise, avoid disclaimers"（简洁，避免免责声明） |
+| 工作流改进 (Workflow improvements) | `AGENTS.md` | "Spawn sub-agents for long tasks"（为长任务派生子代理） |
+| 工具陷阱 (Tool gotchas) | `TOOLS.md` | "Git push needs auth configured first"（Git push 需要先配置认证） |
 
-### Inter-Session Communication
+### 会话间通信 (Inter-Session Communication)
 
-OpenClaw provides tools to share learnings across sessions:
+OpenClaw 提供工具跨会话共享学习：
 
-- **sessions_list** — View active/recent sessions
-- **sessions_history** — Read another session's transcript  
-- **sessions_send** — Send a learning to another session
-- **sessions_spawn** — Spawn a sub-agent for background work
+- **sessions_list** — 查看活动/最近的会话
+- **sessions_history** — 读取另一个会话的转录
+- **sessions_send** — 向另一个会话发送学习
+- **sessions_spawn** — 为后台工作派生子代理
 
-### Optional: Enable Hook
+### 可选：启用 Hook (Optional: Enable Hook)
 
-For automatic reminders at session start:
+在会话开始时自动提醒：
 
 ```bash
 # Copy hook to OpenClaw hooks directory
@@ -103,36 +103,38 @@ cp -r hooks/openclaw ~/.openclaw/hooks/self-improvement
 openclaw hooks enable self-improvement
 ```
 
-See `references/openclaw-integration.md` for complete details.
+完整详情请参阅 `references/openclaw-integration.md`。
 
 ---
 
-## Generic Setup (Other Agents)
+## 通用设置（其他代理）(Generic Setup - Other Agents)
 
-For Claude Code, Codex, Copilot, or other agents, create `.learnings/` in your project:
+对于 Claude Code、Codex、Copilot 或其他代理，在你的项目中创建 `.learnings/`：
 
 ```bash
 mkdir -p .learnings
 ```
 
-Copy templates from `assets/` or create files with headers.
+从 `assets/` 复制模板或创建带标题的文件。
 
-### Add reference to agent files AGENTS.md, CLAUDE.md, or .github/copilot-instructions.md to remind yourself to log learnings. (this is an alternative to hook-based reminders)
+### 添加引用到代理文件 (Add reference to agent files)
 
-#### Self-Improvement Workflow
+在 AGENTS.md、CLAUDE.md 或 .github/copilot-instructions.md 中添加引用，提醒自己记录学习（这是基于 hook 的提醒的替代方案）。
 
-When errors or corrections occur:
-1. Log to `.learnings/ERRORS.md`, `LEARNINGS.md`, or `FEATURE_REQUESTS.md`
-2. Review and promote broadly applicable learnings to:
-   - `CLAUDE.md` - project facts and conventions
-   - `AGENTS.md` - workflows and automation
-   - `.github/copilot-instructions.md` - Copilot context
+#### 持续改进工作流 (Self-Improvement Workflow)
 
-## Logging Format
+当错误或纠正发生时：
+1. 记录到 `.learnings/ERRORS.md`、`LEARNINGS.md` 或 `FEATURE_REQUESTS.md`
+2. 审查并将广泛适用的学习提升到：
+   - `CLAUDE.md` - 项目事实和约定
+   - `AGENTS.md` - 工作流和自动化
+   - `.github/copilot-instructions.md` - Copilot 上下文
 
-### Learning Entry
+## 记录格式 (Logging Format)
 
-Append to `.learnings/LEARNINGS.md`:
+### 学习条目 (Learning Entry)
+
+追加到 `.learnings/LEARNINGS.md`：
 
 ```markdown
 ## [LRN-YYYYMMDD-XXX] category
@@ -164,9 +166,9 @@ Specific fix or improvement to make
 ---
 ```
 
-### Error Entry
+### 错误条目 (Error Entry)
 
-Append to `.learnings/ERRORS.md`:
+追加到 `.learnings/ERRORS.md`：
 
 ```markdown
 ## [ERR-YYYYMMDD-XXX] skill_or_command_name
@@ -200,9 +202,9 @@ If identifiable, what might resolve this
 ---
 ```
 
-### Feature Request Entry
+### 功能请求条目 (Feature Request Entry)
 
-Append to `.learnings/FEATURE_REQUESTS.md`:
+追加到 `.learnings/FEATURE_REQUESTS.md`：
 
 ```markdown
 ## [FEAT-YYYYMMDD-XXX] capability_name
@@ -213,7 +215,7 @@ Append to `.learnings/FEATURE_REQUESTS.md`:
 **Area**: frontend | backend | infra | tests | docs | config
 
 ### Requested Capability
-What the user wanted to do
+What user wanted to do
 
 ### User Context
 Why they needed it, what problem they're solving
@@ -231,21 +233,21 @@ How this could be built, what it might extend
 ---
 ```
 
-## ID Generation
+## ID 生成 (ID Generation)
 
-Format: `TYPE-YYYYMMDD-XXX`
-- TYPE: `LRN` (learning), `ERR` (error), `FEAT` (feature)
-- YYYYMMDD: Current date
-- XXX: Sequential number or random 3 chars (e.g., `001`, `A7B`)
+格式：`TYPE-YYYYMMDD-XXX`
+- TYPE: `LRN`（学习）、`ERR`（错误）、`FEAT`（功能）
+- YYYYMMDD: 当前日期
+- XXX: 序号或随机的3个字符（如 `001`、`A7B`）
 
-Examples: `LRN-20250115-001`, `ERR-20250115-A3F`, `FEAT-20250115-002`
+示例：`LRN-20250115-001`、`ERR-20250115-A3F`、`FEAT-20250115-002`
 
-## Resolving Entries
+## 解决条目 (Resolving Entries)
 
-When an issue is fixed, update the entry:
+当问题被修复时，更新条目：
 
-1. Change `**Status**: pending` → `**Status**: resolved`
-2. Add resolution block after Metadata:
+1. 将 `**Status**: pending` 改为 `**Status**: resolved`
+2. 在 Metadata 后添加解决块：
 
 ```markdown
 ### Resolution
@@ -254,123 +256,121 @@ When an issue is fixed, update the entry:
 - **Notes**: Brief description of what was done
 ```
 
-Other status values:
-- `in_progress` - Actively being worked on
-- `wont_fix` - Decided not to address (add reason in Resolution notes)
-- `promoted` - Elevated to CLAUDE.md, AGENTS.md, or .github/copilot-instructions.md
+其他状态值：
+- `in_progress` - 正在积极处理
+- `wont_fix` - 决定不解决（在 Resolution notes 中添加原因）
+- `promoted` - 提升到 CLAUDE.md、AGENTS.md 或 .github/copilot-instructions.md
 
-## Promoting to Project Memory
+## 提升到项目记忆 (Promoting to Project Memory)
 
-When a learning is broadly applicable (not a one-off fix), promote it to permanent project memory.
+当学习内容广泛适用（不是一次性修复）时，将其提升到永久项目记忆。
 
-### When to Promote
+### 何时提升 (When to Promote)
 
-- Learning applies across multiple files/features
-- Knowledge any contributor (human or AI) should know
-- Prevents recurring mistakes
-- Documents project-specific conventions
+- 学习适用于多个文件/功能
+- 任何贡献者（人类或 AI）都应该知道的知识
+- 防止重复错误
+- 记录项目特定的约定
 
-### Promotion Targets
+### 提升目标 (Promotion Targets)
 
-| Target | What Belongs There |
+| 目标 (Target) | 适合的内容 (What Belongs There) |
 |--------|-------------------|
-| `CLAUDE.md` | Project facts, conventions, gotchas for all Claude interactions |
-| `AGENTS.md` | Agent-specific workflows, tool usage patterns, automation rules |
-| `.github/copilot-instructions.md` | Project context and conventions for GitHub Copilot |
-| `SOUL.md` | Behavioral guidelines, communication style, principles (OpenClaw workspace) |
-| `TOOLS.md` | Tool capabilities, usage patterns, integration gotchas (OpenClaw workspace) |
+| `CLAUDE.md` | 项目事实、约定、所有 Claude 交互的陷阱 |
+| `AGENTS.md` | 代理特定的工作流、工具使用模式、自动化规则 |
+| `.github/copilot-instructions.md` | GitHub Copilot 的项目上下文和约定 |
+| `SOUL.md` | 行为指导、沟通风格、原则（OpenClaw 工作空间） |
+| `TOOLS.md` | 工具能力、使用模式、集成陷阱（OpenClaw 工作空间） |
 
-### How to Promote
+### 如何提升 (How to Promote)
 
-1. **Distill** the learning into a concise rule or fact
-2. **Add** to appropriate section in target file (create file if needed)
-3. **Update** original entry:
-   - Change `**Status**: pending` → `**Status**: promoted`
-   - Add `**Promoted**: CLAUDE.md`, `AGENTS.md`, or `.github/copilot-instructions.md`
+1. **蒸馏**（Distill）学习为简洁的规则或事实
+2. **添加**（Add）到目标文件的适当部分（如需要则创建文件）
+3. **更新**（Update）原始条目：
+   - 将 `**Status**: pending` 改为 `**Status**: promoted`
+   - 添加 `**Promoted**: CLAUDE.md`、`AGENTS.md` 或 `.github/copilot-instructions.md`
 
-### Promotion Examples
+### 提升示例 (Promotion Examples)
 
-**Learning** (verbose):
-> Project uses pnpm workspaces. Attempted `npm install` but failed. 
-> Lock file is `pnpm-lock.yaml`. Must use `pnpm install`.
+**学习**（冗长）:
+> 项目使用 pnpm workspaces。尝试 `npm install` 但失败了。
+> Lock file 是 `pnpm-lock.yaml`。必须使用 `pnpm install`。
 
-**In CLAUDE.md** (concise):
+**在 CLAUDE.md 中**（简洁）:
 ```markdown
 ## Build & Dependencies
 - Package manager: pnpm (not npm) - use `pnpm install`
 ```
 
-**Learning** (verbose):
-> When modifying API endpoints, must regenerate TypeScript client.
-> Forgetting this causes type mismatches at runtime.
+**学习**（冗长）:
+> 修改 API 端点时，必须重新生成 TypeScript 客户端。
+> 忘记这一点会导致运行时类型不匹配。
 
-**In AGENTS.md** (actionable):
+**在 AGENTS.md 中**（可操作）:
 ```markdown
 ## After API Changes
 1. Regenerate client: `pnpm run generate:api`
 2. Check for type errors: `pnpm tsc --noEmit`
 ```
 
-## Recurring Pattern Detection
+## 重复模式检测 (Recurring Pattern Detection)
 
-If logging something similar to an existing entry:
+如果记录的内容与现有条目相似：
 
-1. **Search first**: `grep -r "keyword" .learnings/`
-2. **Link entries**: Add `**See Also**: ERR-20250110-001` in Metadata
-3. **Bump priority** if issue keeps recurring
-4. **Consider systemic fix**: Recurring issues often indicate:
-   - Missing documentation (→ promote to CLAUDE.md or .github/copilot-instructions.md)
-   - Missing automation (→ add to AGENTS.md)
-   - Architectural problem (→ create tech debt ticket)
+1. **先搜索**（Search first）：`grep -r "keyword" .learnings/`
+2. **链接条目**（Link entries）：在 Metadata 中添加 `**See Also**: ERR-20250110-001`
+3. **提升优先级**（Bump priority），如果问题持续发生
+4. **考虑系统性修复**（Consider systemic fix）：重复问题通常表明：
+   - 缺少文档（→ 提升到 CLAUDE.md 或 .github/copilot-instructions.md）
+   - 缺少自动化（→ 添加到 AGENTS.md）
+   - 架构问题（→ 创建技术债务 ticket）
 
-## Simplify & Harden Feed
+## 简化与固化源 (Simplify & Harden Feed)
 
-Use this workflow to ingest recurring patterns from the `simplify-and-harden`
-skill and turn them into durable prompt guidance.
+使用此工作流从 `simplify-and-harden` 技能摄入重复模式，并将它们转化为持久的提示指导。
 
-### Ingestion Workflow
+### 摄入工作流 (Ingestion Workflow)
 
-1. Read `simplify_and_harden.learning_loop.candidates` from the task summary.
-2. For each candidate, use `pattern_key` as the stable dedupe key.
-3. Search `.learnings/LEARNINGS.md` for an existing entry with that key:
+1. 从任务摘要读取 `simplify_and_harden.learning_loop.candidates`。
+2. 对于每个候选项，使用 `pattern_key` 作为稳定的去重键。
+3. 搜索 `.learnings/LEARNINGS.md` 中具有该键的现有条目：
    - `grep -n "Pattern-Key: <pattern_key>" .learnings/LEARNINGS.md`
-4. If found:
-   - Increment `Recurrence-Count`
-   - Update `Last-Seen`
-   - Add `See Also` links to related entries/tasks
-5. If not found:
-   - Create a new `LRN-...` entry
-   - Set `Source: simplify-and-harden`
-   - Set `Pattern-Key`, `Recurrence-Count: 1`, and `First-Seen`/`Last-Seen`
+4. 如果找到：
+   - 增加 `Recurrence-Count`
+   - 更新 `Last-Seen`
+   - 添加相关条目/任务的 `See Also` 链接
+5. 如果未找到：
+   - 创建新的 `LRN-...` 条目
+   - 设置 `Source: simplify-and-harden`
+   - 设置 `Pattern-Key`、`Recurrence-Count: 1` 和 `First-Seen`/`Last-Seen`
 
-### Promotion Rule (System Prompt Feedback)
+### 提升规则（系统提示反馈）(Promotion Rule - System Prompt Feedback)
 
-Promote recurring patterns into agent context/system prompt files when all are true:
+当所有条件都满足时，将重复模式提升到代理上下文/系统提示文件：
 
 - `Recurrence-Count >= 3`
-- Seen across at least 2 distinct tasks
-- Occurred within a 30-day window
+- 在至少 2 个不同任务中看到
+- 在 30 天窗口内发生
 
-Promotion targets:
+提升目标：
 - `CLAUDE.md`
 - `AGENTS.md`
 - `.github/copilot-instructions.md`
-- `SOUL.md` / `TOOLS.md` for OpenClaw workspace-level guidance when applicable
+- `SOUL.md` / `TOOLS.md` 用于 OpenClaw 工作空间级别的指导（如适用）
 
-Write promoted rules as short prevention rules (what to do before/while coding),
-not long incident write-ups.
+将提升的规则编写为简短的预防规则（在编码之前/期间做什么），而不是冗长的事件报告。
 
-## Periodic Review
+## 定期审查 (Periodic Review)
 
-Review `.learnings/` at natural breakpoints:
+在自然断点处审查 `.learnings/`：
 
-### When to Review
-- Before starting a new major task
-- After completing a feature
-- When working in an area with past learnings
-- Weekly during active development
+### 何时审查 (When to Review)
+- 开始新的主要任务之前
+- 完成功能之后
+- 在有过去学习的领域工作时
+- 活跃开发期间每周一次
 
-### Quick Status Check
+### 快速状态检查 (Quick Status Check)
 ```bash
 # Count pending items
 grep -h "Status\*\*: pending" .learnings/*.md | wc -l
@@ -382,95 +382,95 @@ grep -B5 "Priority\*\*: high" .learnings/*.md | grep "^## \["
 grep -l "Area\*\*: backend" .learnings/*.md
 ```
 
-### Review Actions
-- Resolve fixed items
-- Promote applicable learnings
-- Link related entries
-- Escalate recurring issues
+### 审查操作 (Review Actions)
+- 解决已修复的条目
+- 提升适用的学习
+- 链接相关条目
+- 升级重复问题
 
-## Detection Triggers
+## 检测触发器 (Detection Triggers)
 
-Automatically log when you notice:
+当注意到以下情况时自动记录：
 
-**Corrections** (→ learning with `correction` category):
-- "No, that's not right..."
-- "Actually, it should be..."
-- "You're wrong about..."
-- "That's outdated..."
+**纠正**（→ learning with `correction` category）:
+- "不，那不对..."
+- "实际上，应该是..."
+- "你关于...错了"
+- "那过时了..."
 
-**Feature Requests** (→ feature request):
-- "Can you also..."
-- "I wish you could..."
-- "Is there a way to..."
-- "Why can't you..."
+**功能请求**（→ feature request）:
+- "你能也..."
+- "我希望你能..."
+- "有没有办法..."
+- "为什么你不能..."
 
-**Knowledge Gaps** (→ learning with `knowledge_gap` category):
-- User provides information you didn't know
-- Documentation you referenced is outdated
-- API behavior differs from your understanding
+**知识差距**（→ learning with `knowledge_gap` category）:
+- 用户提供你不知道的信息
+- 你引用的文档过时
+- API 行为与你的理解不同
 
-**Errors** (→ error entry):
-- Command returns non-zero exit code
-- Exception or stack trace
-- Unexpected output or behavior
-- Timeout or connection failure
+**错误**（→ error entry）:
+- 命令返回非零退出代码
+- 异常或堆栈跟踪
+- 意外的输出或行为
+- 超时或连接失败
 
-## Priority Guidelines
+## 优先级指南 (Priority Guidelines)
 
-| Priority | When to Use |
+| 优先级 (Priority) | 何时使用 (When to Use) |
 |----------|-------------|
-| `critical` | Blocks core functionality, data loss risk, security issue |
-| `high` | Significant impact, affects common workflows, recurring issue |
-| `medium` | Moderate impact, workaround exists |
-| `low` | Minor inconvenience, edge case, nice-to-have |
+| `critical` | 阻止核心功能、数据丢失风险、安全问题 |
+| `high` | 重大影响、影响常见工作流、重复问题 |
+| `medium` | 中等影响、存在变通方法 |
+| `low` | 轻微不便、边缘情况、锦上添花 |
 
-## Area Tags
+## 区域标签 (Area Tags)
 
-Use to filter learnings by codebase region:
+用于按代码库区域过滤学习：
 
-| Area | Scope |
+| 区域 (Area) | 范围 (Scope) |
 |------|-------|
-| `frontend` | UI, components, client-side code |
-| `backend` | API, services, server-side code |
-| `infra` | CI/CD, deployment, Docker, cloud |
-| `tests` | Test files, testing utilities, coverage |
-| `docs` | Documentation, comments, READMEs |
-| `config` | Configuration files, environment, settings |
+| `frontend` | UI、组件、客户端代码 |
+| `backend` | API、服务、服务端代码 |
+| `infra` | CI/CD、部署、Docker、云 |
+| `tests` | 测试文件、测试工具、覆盖率 |
+| `docs` | 文档、注释、README |
+| `config` | 配置文件、环境、设置 |
 
-## Best Practices
+## 最佳实践 (Best Practices)
 
-1. **Log immediately** - context is freshest right after the issue
-2. **Be specific** - future agents need to understand quickly
-3. **Include reproduction steps** - especially for errors
-4. **Link related files** - makes fixes easier
-5. **Suggest concrete fixes** - not just "investigate"
-6. **Use consistent categories** - enables filtering
-7. **Promote aggressively** - if in doubt, add to CLAUDE.md or .github/copilot-instructions.md
-8. **Review regularly** - stale learnings lose value
+1. **立即记录**（Log immediately） - 上下文在问题之后最清晰
+2. **具体**（Be specific） - 未来的代理需要快速理解
+3. **包含重现步骤**（Include reproduction steps） - 特别是对于错误
+4. **链接相关文件**（Link related files） - 使修复更容易
+5. **建议具体修复**（Suggest concrete fixes） - 不仅仅是"调查"
+6. **使用一致分类**（Use consistent categories） - 启用过滤
+7. **积极提升**（Promote aggressively） - 如果不确定，添加到 CLAUDE.md 或 .github/copilot-instructions.md
+8. **定期审查**（Review regularly） - 陈旧的学习会失去价值
 
-## Gitignore Options
+## Gitignore 选项 (Gitignore Options)
 
-**Keep learnings local** (per-developer):
+**保持学习本地**（per-developer）:
 ```gitignore
 .learnings/
 ```
 
-**Track learnings in repo** (team-wide):
-Don't add to .gitignore - learnings become shared knowledge.
+**在仓库中跟踪学习**（team-wide）:
+不要添加到 .gitignore - 学习成为共享知识。
 
-**Hybrid** (track templates, ignore entries):
+**混合**（track templates, ignore entries）:
 ```gitignore
 .learnings/*.md
 !.learnings/.gitkeep
 ```
 
-## Hook Integration
+## Hook 集成 (Hook Integration)
 
-Enable automatic reminders through agent hooks. This is **opt-in** - you must explicitly configure hooks.
+通过代理 hook 启用自动提醒。这是**可选的**（opt-in） - 你必须显式配置 hooks。
 
-### Quick Setup (Claude Code / Codex)
+### 快速设置（Claude Code / Codex）(Quick Setup)
 
-Create `.claude/settings.json` in your project:
+在项目中创建 `.claude/settings.json`：
 
 ```json
 {
@@ -486,9 +486,9 @@ Create `.claude/settings.json` in your project:
 }
 ```
 
-This injects a learning evaluation reminder after each prompt (~50-100 tokens overhead).
+这会在每个提示后注入学习评估提醒（~50-100 token 开销）。
 
-### Full Setup (With Error Detection)
+### 完整设置（带错误检测）(Full Setup - With Error Detection)
 
 ```json
 {
@@ -511,137 +511,137 @@ This injects a learning evaluation reminder after each prompt (~50-100 tokens ov
 }
 ```
 
-### Available Hook Scripts
+### 可用的 Hook 脚本 (Available Hook Scripts)
 
-| Script | Hook Type | Purpose |
+| 脚本 (Script) | Hook 类型 (Hook Type) | 目的 (Purpose) |
 |--------|-----------|---------|
-| `scripts/activator.sh` | UserPromptSubmit | Reminds to evaluate learnings after tasks |
-| `scripts/error-detector.sh` | PostToolUse (Bash) | Triggers on command errors |
+| `scripts/activator.sh` | UserPromptSubmit | 在任务后提醒评估学习 |
+| `scripts/error-detector.sh` | PostToolUse (Bash) | 在命令错误时触发 |
 
-See `references/hooks-setup.md` for detailed configuration and troubleshooting.
+详细配置和故障排除请参阅 `references/hooks-setup.md`。
 
-## Automatic Skill Extraction
+## 自动技能提取 (Automatic Skill Extraction)
 
-When a learning is valuable enough to become a reusable skill, extract it using the provided helper.
+当学习内容足够有价值成为可重用技能时，使用提供的帮助程序提取它。
 
-### Skill Extraction Criteria
+### 技能提取标准 (Skill Extraction Criteria)
 
-A learning qualifies for skill extraction when ANY of these apply:
+当以下任何条件适用时，学习有资格进行技能提取：
 
-| Criterion | Description |
+| 标准 (Criterion) | 描述 (Description) |
 |-----------|-------------|
-| **Recurring** | Has `See Also` links to 2+ similar issues |
-| **Verified** | Status is `resolved` with working fix |
-| **Non-obvious** | Required actual debugging/investigation to discover |
-| **Broadly applicable** | Not project-specific; useful across codebases |
-| **User-flagged** | User says "save this as a skill" or similar |
+| **重复**（Recurring） | 有到 2+ 相似问题的 `See Also` 链接 |
+| **已验证**（Verified） | 状态是 `resolved`，有可工作的修复 |
+| **非显而易见**（Non-obvious） | 需要实际调试/调查来发现 |
+| **广泛适用**（Broadly applicable） | 非项目特定；跨代码库有用 |
+| **用户标记**（User-flagged） | 用户说"保存为技能"或类似的话 |
 
-### Extraction Workflow
+### 提取工作流 (Extraction Workflow)
 
-1. **Identify candidate**: Learning meets extraction criteria
-2. **Run helper** (or create manually):
+1. **识别候选**（Identify candidate）：学习符合提取标准
+2. **运行帮助程序**（Run helper）（或手动创建）：
    ```bash
    ./skills/self-improvement/scripts/extract-skill.sh skill-name --dry-run
    ./skills/self-improvement/scripts/extract-skill.sh skill-name
    ```
-3. **Customize SKILL.md**: Fill in template with learning content
-4. **Update learning**: Set status to `promoted_to_skill`, add `Skill-Path`
-5. **Verify**: Read skill in fresh session to ensure it's self-contained
+3. **自定义 SKILL.md**（Customize SKILL.md）：用学习内容填写模板
+4. **更新学习**（Update learning）：将状态设置为 `promoted_to_skill`，添加 `Skill-Path`
+5. **验证**（Verify）：在新会话中读取技能以确保它是自包含的
 
-### Manual Extraction
+### 手动提取 (Manual Extraction)
 
-If you prefer manual creation:
+如果你更喜欢手动创建：
 
-1. Create `skills/<skill-name>/SKILL.md`
-2. Use template from `assets/SKILL-TEMPLATE.md`
-3. Follow [Agent Skills spec](https://agentskills.io/specification):
-   - YAML frontmatter with `name` and `description`
-   - Name must match folder name
-   - No README.md inside skill folder
+1. 创建 `skills/<skill-name>/SKILL.md`
+2. 使用 `assets/SKILL-TEMPLATE.md` 中的模板
+3. 遵循 [Agent Skills spec](https://agentskills.io/specification)：
+   - YAML frontmatter，包含 `name` 和 `description`
+   - 名称必须匹配文件夹名称
+   - 技能文件夹内没有 README.md
 
-### Extraction Detection Triggers
+### 提取检测触发器 (Extraction Detection Triggers)
 
-Watch for these signals that a learning should become a skill:
+留意这些信号，表明学习应该成为技能：
 
-**In conversation:**
+**在对话中**:
 - "Save this as a skill"
-- "I keep running into this"
-- "This would be useful for other projects"
-- "Remember this pattern"
+- "我总是遇到这个"
+- "这对其他项目有用"
+- "记住这个模式"
 
-**In learning entries:**
-- Multiple `See Also` links (recurring issue)
-- High priority + resolved status
-- Category: `best_practice` with broad applicability
-- User feedback praising the solution
+**在学习条目中**:
+- 多个 `See Also` 链接（重复问题）
+- 高优先级 + 已解决状态
+- 分类：`best_practice`，具有广泛适用性
+- 用户反馈赞扬解决方案
 
-### Skill Quality Gates
+### 技能质量关口 (Skill Quality Gates)
 
-Before extraction, verify:
+提取前，验证：
 
-- [ ] Solution is tested and working
-- [ ] Description is clear without original context
-- [ ] Code examples are self-contained
-- [ ] No project-specific hardcoded values
-- [ ] Follows skill naming conventions (lowercase, hyphens)
+- [ ] 解决方案已测试并工作
+- [ ] 在没有原始上下文的情况下描述清晰
+- [ ] 代码示例是自包含的
+- [ ] 没有项目特定的硬编码值
+- [ ] 遵循技能命名约定（小写、连字符）
 
-## Multi-Agent Support
+## 多代理支持 (Multi-Agent Support)
 
-This skill works across different AI coding agents with agent-specific activation.
+此技能在不同的 AI 编码代理上工作，具有代理特定的激活。
 
 ### Claude Code
 
-**Activation**: Hooks (UserPromptSubmit, PostToolUse)
-**Setup**: `.claude/settings.json` with hook configuration
-**Detection**: Automatic via hook scripts
+**激活**（Activation）：Hooks（UserPromptSubmit、PostToolUse）
+**设置**（Setup）：`.claude/settings.json` 带有 hook 配置
+**检测**（Detection）：通过 hook 脚本自动
 
 ### Codex CLI
 
-**Activation**: Hooks (same pattern as Claude Code)
-**Setup**: `.codex/settings.json` with hook configuration
-**Detection**: Automatic via hook scripts
+**激活**（Activation）：Hooks（与 Claude Code 相同模式）
+**设置**（Setup）：`.codex/settings.json` 带有 hook 配置
+**检测**（Detection）：通过 hook 脚本自动
 
 ### GitHub Copilot
 
-**Activation**: Manual (no hook support)
-**Setup**: Add to `.github/copilot-instructions.md`:
+**激活**（Activation）：手动（无 hook 支持）
+**设置**（Setup）：添加到 `.github/copilot-instructions.md`：
 
 ```markdown
 ## Self-Improvement
 
-After solving non-obvious issues, consider logging to `.learnings/`:
-1. Use format from self-improvement skill
-2. Link related entries with See Also
-3. Promote high-value learnings to skills
+解决非显而易见的问题后，考虑记录到 `.learnings/`：
+1. 使用 self-improvement 技能的格式
+2. 使用 See Also 链接相关条目
+3. 将高价值学习提升到技能
 
-Ask in chat: "Should I log this as a learning?"
+在聊天中询问："Should I log this as a learning?"
 ```
 
-**Detection**: Manual review at session end
+**检测**（Detection）：在会话结束时手动审查
 
 ### OpenClaw
 
-**Activation**: Workspace injection + inter-agent messaging
-**Setup**: See "OpenClaw Setup" section above
-**Detection**: Via session tools and workspace files
+**激活**（Activation）：工作空间注入 + 代理间消息
+**设置**（Setup）：见上面的"OpenClaw 设置"部分
+**检测**（Detection）：通过会话工具和工作空间文件
 
-### Agent-Agnostic Guidance
+### 代理无关指导 (Agent-Agnostic Guidance)
 
-Regardless of agent, apply self-improvement when you:
+无论代理如何，在以下情况应用持续改进：
 
-1. **Discover something non-obvious** - solution wasn't immediate
-2. **Correct yourself** - initial approach was wrong
-3. **Learn project conventions** - discovered undocumented patterns
-4. **Hit unexpected errors** - especially if diagnosis was difficult
-5. **Find better approaches** - improved on your original solution
+1. **发现非显而易见的事情** - 解决方案不是即时的
+2. **纠正自己** - 初始方法错了
+3. **学习项目约定** - 发现未记录的模式
+4. **遇到意外错误** - 特别是如果诊断困难
+5. **找到更好的方法** - 改进原始解决方案
 
-### Copilot Chat Integration
+### Copilot Chat 集成 (Copilot Chat Integration)
 
-For Copilot users, add this to your prompts when relevant:
+对于 Copilot 用户，在相关时将其添加到提示中：
 
-> After completing this task, evaluate if any learnings should be logged to `.learnings/` using the self-improvement skill format.
+> 完成此任务后，评估是否应该使用 self-improvement 技能格式将任何学习记录到 `.learnings/`。
 
-Or use quick prompts:
-- "Log this to learnings"
-- "Create a skill from this solution"
-- "Check .learnings/ for related issues"
+或使用快速提示：
+- "记录到学习"
+- "从解决方案创建技能"
+- "检查 .learnings/ 中的相关问题"

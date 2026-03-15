@@ -6,11 +6,11 @@ metadata:
   { "openclaw": { "requires": { "bins": ["curl", "git", "gh"] }, "primaryEnv": "GH_TOKEN" } }
 ---
 
-# gh-issues — Auto-fix GitHub Issues with Parallel Sub-agents
+# gh-issues — 使用并行子代理自动修复 GitHub Issues (Auto-fix GitHub Issues with Parallel Sub-agents)
 
-You are an orchestrator. Follow these 6 phases exactly. Do not skip phases.
+你是一个编排者（orchestrator）。严格按照以下 6 个阶段执行。不要跳过阶段。
 
-IMPORTANT — No `gh` CLI dependency. This skill uses curl + the GitHub REST API exclusively. The GH_TOKEN env var is already injected by OpenClaw. Pass it as a Bearer token in all API calls:
+重要 — 不依赖 `gh` CLI。此技能仅使用 curl + GitHub REST API。GH_TOKEN 环境变量已由 OpenClaw 注入。在所有 API 调用中将其作为 Bearer token 传递：
 
 ```
 curl -s -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" ...
@@ -18,219 +18,219 @@ curl -s -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+
 
 ---
 
-## Phase 1 — Parse Arguments
+## Phase 1 — 解析参数 (Parse Arguments)
 
-Parse the arguments string provided after /gh-issues.
+解析 /gh-issues 后提供的参数字符串。
 
-Positional:
+位置参数 (Positional)：
 
-- owner/repo — optional. This is the source repo to fetch issues from. If omitted, detect from the current git remote:
+- owner/repo — 可选。这是从中获取 issues 的源仓库（source repo）。如果省略，从当前 git remote 检测：
   `git remote get-url origin`
-  Extract owner/repo from the URL (handles both HTTPS and SSH formats).
+  从 URL 中提取 owner/repo（处理 HTTPS 和 SSH 格式）。
   - HTTPS: https://github.com/owner/repo.git → owner/repo
   - SSH: git@github.com:owner/repo.git → owner/repo
-    If not in a git repo or no remote found, stop with an error asking the user to specify owner/repo.
+    如果不在 git 仓库中或找不到 remote，停止并提示错误，要求用户指定 owner/repo。
 
-Flags (all optional):
-| Flag | Default | Description |
+标志（Flags - 全部可选）：
+| 标志 (Flag) | 默认值 (Default) | 描述 (Description) |
 |------|---------|-------------|
-| --label | _(none)_ | Filter by label (e.g. bug, `enhancement`) |
-| --limit | 10 | Max issues to fetch per poll |
-| --milestone | _(none)_ | Filter by milestone title |
-| --assignee | _(none)_ | Filter by assignee (`@me` for self) |
-| --state | open | Issue state: open, closed, all |
-| --fork | _(none)_ | Your fork (`user/repo`) to push branches and open PRs from. Issues are fetched from the source repo; code is pushed to the fork; PRs are opened from the fork to the source repo. |
-| --watch | false | Keep polling for new issues and PR reviews after each batch |
-| --interval | 5 | Minutes between polls (only with `--watch`) |
-| --dry-run | false | Fetch and display only — no sub-agents |
-| --yes | false | Skip confirmation and auto-process all filtered issues |
-| --reviews-only | false | Skip issue processing (Phases 2-5). Only run Phase 6 — check open PRs for review comments and address them. |
-| --cron | false | Cron-safe mode: fetch issues and spawn sub-agents, exit without waiting for results. |
-| --model | _(none)_ | Model to use for sub-agents (e.g. `glm-5`, `zai/glm-5`). If not specified, uses the agent's default model. |
-| --notify-channel | _(none)_ | Telegram channel ID to send final PR summary to (e.g. -1002381931352). Only the final result with PR links is sent, not status updates. |
+| --label | _(none)_ | 按标签过滤（如 bug、`enhancement`） |
+| --limit | 10 | 每次轮询获取的最大 issues 数 |
+| --milestone | _(none)_ | 按里程碑标题过滤 |
+| --assignee | _(none)_ | 按分配者过滤（`@me` 表示自己） |
+| --state | open | Issue 状态：open、closed、all |
+| --fork | _(none)_ | 你的 fork（`user/repo`），用于推送分支和打开 PR。Issues 从源仓库获取；代码推送到 fork；PR 从 fork 打开到源仓库。 |
+| --watch | false | 在每批之后继续轮询新的 issues 和 PR 评论 |
+| --interval | 5 | 轮询之间的分钟数（仅与 `--watch` 一起使用） |
+| --dry-run | false | 仅获取和显示 — 不派生子代理 |
+| --yes | false | 跳过确认并自动处理所有过滤的 issues |
+| --reviews-only | false | 跳过 issue 处理（阶段 2-5）。仅运行阶段 6 — 检查打开的 PR 的 review 评论并处理它们。 |
+| --cron | false | Cron 安全模式：获取 issues 并派生子代理，不等待结果即退出。 |
+| --model | _(none)_ | 用于子代理的模型（如 `glm-5`、`zai/glm-5`）。如果未指定，使用代理的默认模型。 |
+| --notify-channel | _(none)_ | Telegram 频道 ID，用于发送最终 PR 摘要（如 -1002381931352）。仅发送带有 PR 链接的最终结果，不发送状态更新。 |
 
-Store parsed values for use in subsequent phases.
+存储解析的值以供后续阶段使用。
 
-Derived values:
+派生值 (Derived values)：
 
-- SOURCE_REPO = the positional owner/repo (where issues live)
-- PUSH_REPO = --fork value if provided, otherwise same as SOURCE_REPO
-- FORK_MODE = true if --fork was provided, false otherwise
+- SOURCE_REPO = 位置参数 owner/repo（issues 所在位置）
+- PUSH_REPO = 如果提供了 --fork 则使用该值，否则与 SOURCE_REPO 相同
+- FORK_MODE = 如果提供了 --fork 则为 true，否则为 false
 
-**If `--reviews-only` is set:** Skip directly to Phase 6. Run token resolution (from Phase 2) first, then jump to Phase 6.
+**如果设置了 `--reviews-only`**：直接跳到阶段 6。先运行 token 解析（来自阶段 2），然后跳到阶段 6。
 
-**If `--cron` is set:**
+**如果设置了 `--cron`**：
 
-- Force `--yes` (skip confirmation)
-- If `--reviews-only` is also set, run token resolution then jump to Phase 6 (cron review mode)
-- Otherwise, proceed normally through Phases 2-5 with cron-mode behavior active
+- 强制 `--yes`（跳过确认）
+- 如果同时设置了 `--reviews-only`，运行 token 解析然后跳到阶段 6（cron review 模式）
+- 否则，正常通过阶段 2-5，cron-mode 行为处于活动状态
 
 ---
 
-## Phase 2 — Fetch Issues
+## Phase 2 — 获取 Issues (Fetch Issues)
 
-**Token Resolution:**
-First, ensure GH_TOKEN is available. Check environment:
+**Token 解析 (Token Resolution):**
+首先，确保 GH_TOKEN 可用。检查环境：
 
 ```
 echo $GH_TOKEN
 ```
 
-If empty, read from config:
+如果为空，从配置读取：
 
 ```
 cat ~/.openclaw/openclaw.json | jq -r '.skills.entries["gh-issues"].apiKey // empty'
 ```
 
-If still empty, check `/data/.clawdbot/openclaw.json`:
+如果仍然为空，检查 `/data/.clawdbot/openclaw.json`：
 
 ```
 cat /data/.clawdbot/openclaw.json | jq -r '.skills.entries["gh-issues"].apiKey // empty'
 ```
 
-Export as GH_TOKEN for subsequent commands:
+导出为 GH_TOKEN 以供后续命令使用：
 
 ```
 export GH_TOKEN="<token>"
 ```
 
-Build and run a curl request to the GitHub Issues API via exec:
+通过 exec 构建并运行对 GitHub Issues API 的 curl 请求：
 
 ```
 curl -s -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" \
   "https://api.github.com/repos/{SOURCE_REPO}/issues?per_page={limit}&state={state}&{query_params}"
 ```
 
-Where {query_params} is built from:
+其中 {query_params} 由以下内容构建：
 
-- labels={label} if --label was provided
-- milestone={milestone} if --milestone was provided (note: API expects milestone _number_, so if user provides a title, first resolve it via GET /repos/{SOURCE_REPO}/milestones and match by title)
-- assignee={assignee} if --assignee was provided (if @me, first resolve your username via `GET /user`)
+- labels={label} 如果提供了 --label
+- milestone={milestone} 如果提供了 --milestone（注意：API 期望里程碑 _number_，因此如果用户提供标题，首先通过 GET /repos/{SOURCE_REPO}/milestones 解析并按标题匹配）
+- assignee={assignee} 如果提供了 --assignee（如果是 @me，首先通过 `GET /user` 解析你的用户名）
 
-IMPORTANT: The GitHub Issues API also returns pull requests. Filter them out — exclude any item where pull_request key exists in the response object.
+重要：GitHub Issues API 也会返回 pull requests。过滤掉它们 — 排除响应对象中存在 pull_request 键的任何项目。
 
-If in watch mode: Also filter out any issue numbers already in the PROCESSED_ISSUES set from previous batches.
+如果在 watch 模式下：也过滤掉 PROCESSED_ISSUES 集合中已有 issue 编号的任何问题。
 
-Error handling:
+错误处理 (Error handling)：
 
-- If curl returns an HTTP 401 or 403 → stop and tell the user:
-  > "GitHub authentication failed. Please check your apiKey in the OpenClaw dashboard or in ~/.openclaw/openclaw.json under skills.entries.gh-issues."
-- If the response is an empty array (after filtering) → report "No issues found matching filters" and stop (or loop back if in watch mode).
-- If curl fails or returns any other error → report the error verbatim and stop.
+- 如果 curl 返回 HTTP 401 或 403 → 停止并告诉用户：
+  > "GitHub authentication failed. Please check your apiKey in OpenClaw dashboard or in ~/.openclaw/openclaw.json under skills.entries.gh-issues."
+- 如果响应为空数组（过滤后）→ 报告"No issues found matching filters"并停止（如果在 watch 模式则循环返回）。
+- 如果 curl 失败或返回任何其他错误 → 逐字报告错误并停止。
 
-Parse the JSON response. For each issue, extract: number, title, body, labels (array of label names), assignees, html_url.
+解析 JSON 响应。对于每个 issue，提取：number、title、body、labels（标签名称数组）、assignees、html_url。
 
 ---
 
-## Phase 3 — Present & Confirm
+## Phase 3 — 展示和确认 (Present & Confirm)
 
-Display a markdown table of fetched issues:
+显示获取的 issues 的 markdown 表格：
 
-| #   | Title                         | Labels        |
+| #   | 标题 (Title)                         | 标签 (Labels)        |
 | --- | ----------------------------- | ------------- |
 | 42  | Fix null pointer in parser    | bug, critical |
 | 37  | Add retry logic for API calls | enhancement   |
 
-If FORK_MODE is active, also display:
+如果 FORK_MODE 处于活动状态，还显示：
 
 > "Fork mode: branches will be pushed to {PUSH_REPO}, PRs will target `{SOURCE_REPO}`"
 
-If `--dry-run` is active:
+如果 `--dry-run` 处于活动状态：
 
-- Display the table and stop. Do not proceed to Phase 4.
+- 显示表格并停止。不继续到阶段 4。
 
-If `--yes` is active:
+如果 `--yes` 处于活动状态：
 
-- Display the table for visibility
-- Auto-process ALL listed issues without asking for confirmation
-- Proceed directly to Phase 4
+- 显示表格以供可见
+- 自动处理所有列出的 issues 而无需询问确认
+- 直接继续到阶段 4
 
-Otherwise:
-Ask the user to confirm which issues to process:
+否则：
+要求用户确认要处理哪些 issues：
 
-- "all" — process every listed issue
-- Comma-separated numbers (e.g. `42, 37`) — process only those
-- "cancel" — abort entirely
+- "all" — 处理每个列出的 issue
+- 逗号分隔的数字（如 `42, 37`）— 仅处理这些
+- "cancel" — 完全中止
 
-Wait for user response before proceeding.
+在继续之前等待用户响应。
 
-Watch mode note: On the first poll, always confirm with the user (unless --yes is set). On subsequent polls, auto-process all new issues without re-confirming (the user already opted in). Still display the table so they can see what's being processed.
+Watch 模式说明：在第一次轮询时，总是与用户确认（除非设置了 --yes）。在后续轮询中，自动处理所有新 issues 而无需重新确认（用户已经选择加入）。仍然显示表格，以便他们可以看到正在处理的内容。
 
 ---
 
-## Phase 4 — Pre-flight Checks
+## Phase 4 — 预先检查 (Pre-flight Checks)
 
-Run these checks sequentially via exec:
+通过 exec 顺序运行这些检查：
 
-1. **Dirty working tree check:**
+1. **脏工作树检查 (Dirty working tree check):**
 
    ```
    git status --porcelain
    ```
 
-   If output is non-empty, warn the user:
+   如果输出非空，警告用户：
 
    > "Working tree has uncommitted changes. Sub-agents will create branches from HEAD — uncommitted changes will NOT be included. Continue?"
-   > Wait for confirmation. If declined, stop.
+   > 等待确认。如果拒绝，停止。
 
-2. **Record base branch:**
+2. **记录基础分支 (Record base branch):**
 
    ```
    git rev-parse --abbrev-ref HEAD
    ```
 
-   Store as BASE_BRANCH.
+   存储为 BASE_BRANCH。
 
-3. **Verify remote access:**
-   If FORK_MODE:
-   - Verify the fork remote exists. Check if a git remote named `fork` exists:
+3. **验证远程访问 (Verify remote access):**
+   如果 FORK_MODE：
+   - 验证 fork remote 存在。检查是否存在名为 `fork` 的 git remote：
      ```
      git remote get-url fork
      ```
-     If it doesn't exist, add it:
+     如果不存在，添加它：
      ```
      git remote add fork https://x-access-token:$GH_TOKEN@github.com/{PUSH_REPO}.git
      ```
-   - Also verify origin (the source repo) is reachable:
+   - 还要验证 origin（源仓库）可达：
      ```
      git ls-remote --exit-code origin HEAD
      ```
 
-   If not FORK_MODE:
+   如果不是 FORK_MODE：
 
    ```
    git ls-remote --exit-code origin HEAD
    ```
 
-   If this fails, stop with: "Cannot reach remote origin. Check your network and git config."
+   如果失败，停止并提示："Cannot reach remote origin. Check your network and git config."
 
-4. **Verify GH_TOKEN validity:**
+4. **验证 GH_TOKEN 有效性 (Verify GH_TOKEN validity):**
 
    ```
    curl -s -o /dev/null -w "%{http_code}" -H "Authorization: Bearer $GH_TOKEN" https://api.github.com/user
    ```
 
-   If HTTP status is not 200, stop with:
+   如果 HTTP 状态不是 200，停止并提示：
 
-   > "GitHub authentication failed. Please check your apiKey in the OpenClaw dashboard or in ~/.openclaw/openclaw.json under skills.entries.gh-issues."
+   > "GitHub authentication failed. Please check your apiKey in OpenClaw dashboard or in ~/.openclaw/openclaw.json under skills.entries.gh-issues."
 
-5. **Check for existing PRs:**
-   For each confirmed issue number N, run:
+5. **检查现有 PR (Check for existing PRs):**
+   对于每个确认的 issue 编号 N，运行：
 
    ```
    curl -s -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" \
      "https://api.github.com/repos/{SOURCE_REPO}/pulls?head={PUSH_REPO_OWNER}:fix/issue-{N}&state=open&per_page=1"
    ```
 
-   (Where PUSH_REPO_OWNER is the owner portion of `PUSH_REPO`)
-   If the response array is non-empty, remove that issue from the processing list and report:
+   （其中 PUSH_REPO_OWNER 是 `PUSH_REPO` 的 owner 部分）
+   如果响应数组非空，从处理列表中删除该 issue 并报告：
 
    > "Skipping #{N} — PR already exists: {html_url}"
 
-   If all issues are skipped, report and stop (or loop back if in watch mode).
+   如果所有 issues 都被跳过，报告并停止（如果在 watch 模式则循环返回）。
 
-6. **Check for in-progress branches (no PR yet = sub-agent still working):**
-   For each remaining issue number N (not already skipped by the PR check above), check if a `fix/issue-{N}` branch exists on the **push repo** (which may be a fork, not origin):
+6. **检查进行中的分支（尚未创建 PR = 子代理仍在工作）(Check for in-progress branches):**
+   对于每个剩余的 issue 编号 N（尚未被上面的 PR 检查跳过），检查在 **push repo**（可能是 fork，不是 origin）上是否存在 `fix/issue-{N}` 分支：
 
    ```
    curl -s -o /dev/null -w "%{http_code}" \
@@ -238,18 +238,18 @@ Run these checks sequentially via exec:
      "https://api.github.com/repos/{PUSH_REPO}/branches/fix/issue-{N}"
    ```
 
-   If HTTP 200 → the branch exists on the push repo but no open PR was found for it in step 5. Skip that issue:
+   如果 HTTP 200 → 分支存在于 push repo 上但在步骤 5 中未找到打开的 PR。跳过该 issue：
 
    > "Skipping #{N} — branch fix/issue-{N} exists on {PUSH_REPO}, fix likely in progress"
 
-   This check uses the GitHub API instead of `git ls-remote` so it works correctly in fork mode (where branches are pushed to the fork, not origin).
+   此检查使用 GitHub API 而不是 `git ls-remote`，以便在 fork 模式下正确工作（分支被推送到 fork，而不是 origin）。
 
-   If all issues are skipped after this check, report and stop (or loop back if in watch mode).
+   如果在此检查后所有 issues 都被跳过，报告并停止（如果在 watch 模式则循环返回）。
 
-7. **Check claim-based in-progress tracking:**
-   This prevents duplicate processing when a sub-agent from a previous cron run is still working but hasn't pushed a branch or opened a PR yet.
+7. **检查基于声明（claim）的进行中跟踪 (Check claim-based in-progress tracking):**
+   这防止先前 cron 运行的子代理仍在工作但尚未推送分支或打开 PR 时的重复处理。
 
-   Read the claims file (create empty `{}` if missing):
+   读取声明文件（如果缺失则创建空 `{}`）：
 
    ```
    CLAIMS_FILE="/data/.clawdbot/gh-issues-claims.json"
@@ -259,7 +259,7 @@ Run these checks sequentially via exec:
    fi
    ```
 
-   Parse the claims file. For each entry, check if the claim timestamp is older than 2 hours. If so, remove it (expired — the sub-agent likely finished or failed silently). Write back the cleaned file:
+   解析声明文件。对于每个条目，检查声明时间戳是否早于 2 小时。如果是，删除它（已过期 — 子代理可能已完成或静默失败）。写回清理后的文件：
 
    ```
    CLAIMS=$(cat "$CLAIMS_FILE")
@@ -268,30 +268,30 @@ Run these checks sequentially via exec:
    echo "$CLAIMS" > "$CLAIMS_FILE"
    ```
 
-   For each remaining issue number N (not already skipped by steps 5 or 6), check if `{SOURCE_REPO}#{N}` exists as a key in the claims file.
+   对于每个剩余的 issue 编号 N（尚未被步骤 5 或 6 跳过），检查 `{SOURCE_REPO}#{N}` 是否作为键存在于声明文件中。
 
-   If claimed and not expired → skip:
+   如果已被声明且未过期 → 跳过：
 
    > "Skipping #{N} — sub-agent claimed this issue {minutes}m ago, still within timeout window"
 
-   Where `{minutes}` is calculated from the claim timestamp to now.
+   其中 `{minutes}` 是从声明时间戳到现在的计算结果。
 
-   If all issues are skipped after this check, report and stop (or loop back if in watch mode).
+   如果在此检查后所有 issues 都被跳过，报告并停止（如果在 watch 模式则循环返回）。
 
 ---
 
-## Phase 5 — Spawn Sub-agents (Parallel)
+## Phase 5 — 派生子代理（并行）(Spawn Sub-agents - Parallel)
 
-**Cron mode (`--cron` is active):**
+**Cron 模式（`--cron` 处于活动状态）:**
 
-- **Sequential cursor tracking:** Use a cursor file to track which issue to process next:
+- **顺序光标跟踪 (Sequential cursor tracking):** 使用光标文件跟踪下一个要处理的 issue：
 
   ```
   CURSOR_FILE="/data/.clawdbot/gh-issues-cursor-{SOURCE_REPO_SLUG}.json"
-  # SOURCE_REPO_SLUG = owner-repo with slashes replaced by hyphens (e.g., openclaw-openclaw)
+  # SOURCE_REPO_SLUG = owner-repo，斜杠替换为连字符（如 openclaw-openclaw）
   ```
 
-  Read the cursor file (create if missing):
+  读取光标文件（如果缺失则创建）：
 
   ```
   if [ ! -f "$CURSOR_FILE" ]; then
@@ -299,46 +299,46 @@ Run these checks sequentially via exec:
   fi
   ```
 
-  - `last_processed`: issue number of the last completed issue (or null if none)
-  - `in_progress`: issue number currently being processed (or null)
+  - `last_processed`: 最后完成的 issue 的编号（如果没有则为 null）
+  - `in_progress`: 当前正在处理的 issue 编号（或 null）
 
-- **Select next issue:** Filter the fetched issues list to find the first issue where:
-  - Issue number > last_processed (if last_processed is set)
-  - AND issue is not in the claims file (not already in progress)
-  - AND no PR exists for the issue (checked in Phase 4 step 5)
-  - AND no branch exists on the push repo (checked in Phase 4 step 6)
-- If no eligible issue is found after the last_processed cursor, wrap around to the beginning (start from the oldest eligible issue).
+- **选择下一个 issue (Select next issue):** 过滤获取的 issues 列表，找到第一个满足以下条件的 issue：
+  - Issue 编号 > last_processed（如果设置了 last_processed）
+  - 并且 issue 不在声明文件中（尚未在进行中）
+  - 并且 issue 不存在 PR（在阶段 4 步骤 5 中检查）
+  - 并且 push repo 上不存在分支（在阶段 4 步骤 6 中检查）
+- 如果在 last_processed 光标之后未找到符合条件的 issue，则绕回到开头（从最早符合条件的 issue 开始）。
 
-- If an eligible issue is found:
-  1. Mark it as in_progress in the cursor file
-  2. Spawn a single sub-agent for that one issue with `cleanup: "keep"` and `runTimeoutSeconds: 3600`
-  3. If `--model` was provided, include `model: "{MODEL}"` in the spawn config
-  4. If `--notify-channel` was provided, include the channel in the task so the sub-agent can notify
-  5. Do NOT await the sub-agent result — fire and forget
-  6. **Write claim:** After spawning, read the claims file, add `{SOURCE_REPO}#{N}` with the current ISO timestamp, and write it back
-  7. Immediately report: "Spawned fix agent for #{N} — will create PR when complete"
-  8. Exit the skill. Do not proceed to Results Collection or Phase 6.
+- 如果找到符合条件的 issue：
+  1. 在光标文件中将其标记为 in_progress
+  2. 为该 issue 派生单个子代理，使用 `cleanup: "keep"` 和 `runTimeoutSeconds: 3600`
+  3. 如果提供了 `--model`，在 spawn 配置中包含 `model: "{MODEL}"`
+  4. 如果提供了 `--notify-channel`，在任务中包含 channel，以便子代理可以通知
+  5. 不要等待子代理结果 — 即发即忘
+  6. **写入声明 (Write claim):** 派生后，读取声明文件，添加 `{SOURCE_REPO}#{N}` 并附带当前 ISO 时间戳，写回
+  7. 立即报告："Spawned fix agent for #{N} — will create PR when complete"
+  8. 退出技能。不要继续到结果收集或阶段 6。
 
-- If no eligible issue is found (all issues either have PRs, have branches, or are in progress), report "No eligible issues to process — all issues have PRs/branches or are in progress" and exit.
+- 如果未找到符合条件的 issue（所有 issues 都有 PR、分支或在进行中），报告"No eligible issues to process — all issues have PRs/branches or are in progress"并退出。
 
-**Normal mode (`--cron` is NOT active):**
-For each confirmed issue, spawn a sub-agent using sessions_spawn. Launch up to 8 concurrently (matching `subagents.maxConcurrent: 8`). If more than 8 issues, batch them — launch the next agent as each completes.
+**普通模式（`--cron` 未处于活动状态）:**
+对于每个确认的 issue，使用 sessions_spawn 派生子代理。最多同时启动 8 个（匹配 `subagents.maxConcurrent: 8`）。如果超过 8 个 issues，分批处理 — 每个完成时启动下一个代理。
 
-**Write claims:** After spawning each sub-agent, read the claims file, add `{SOURCE_REPO}#{N}` with the current ISO timestamp, and write it back (same procedure as cron mode above). This covers interactive usage where watch mode might overlap with cron runs.
+**写入声明 (Write claims):** 派生每个子代理后，读取声明文件，添加 `{SOURCE_REPO}#{N}` 并附带当前 ISO 时间戳，写回（与 cron 模式相同的过程）。这涵盖了 watch 模式可能与 cron 运行重叠的交互使用。
 
-### Sub-agent Task Prompt
+### 子代理任务提示 (Sub-agent Task Prompt)
 
-For each issue, construct the following prompt and pass it to sessions_spawn. Variables to inject into the template:
+对于每个 issue，构建以下提示并通过 sessions_spawn 传递。要注入到模板的变量：
 
-- {SOURCE_REPO} — upstream repo where the issue lives
-- {PUSH_REPO} — repo to push branches to (same as SOURCE_REPO unless fork mode)
+- {SOURCE_REPO} — issue 所在的上游仓库
+- {PUSH_REPO} — 要推送分支的仓库（与 SOURCE_REPO 相同，除非在 fork 模式）
 - {FORK_MODE} — true/false
-- {PUSH_REMOTE} — `fork` if FORK_MODE, otherwise `origin`
-- {number}, {title}, {url}, {labels}, {body} — from the issue
-- {BASE_BRANCH} — from Phase 4
-- {notify_channel} — Telegram channel ID for notifications (empty if not set). Replace {notify_channel} in the template below with the value of `--notify-channel` flag (or leave as empty string if not provided).
+- {PUSH_REMOTE} — 如果 FORK_MODE 则为 `fork`，否则为 `origin`
+- {number}, {title}, {url}, {labels}, {body} — 来自 issue
+- {BASE_BRANCH} — 来自阶段 4
+- {notify_channel} — 用于通知的 Telegram 频道 ID（如果未设置则为空）。在下面的模板中用 `--notify-channel` 标志的值替换 {notify_channel}（如果未提供则保留为空字符串）。
 
-When constructing the task, replace all template variables including {notify_channel} with actual values.
+构造任务时，包括 {notify_channel} 在内的所有模板变量都用实际值替换。
 
 ```
 You are a focused code-fix agent. Your task is to fix a single GitHub issue and open a PR.
@@ -388,7 +388,7 @@ Verify: echo "Token: ${GH_TOKEN:0:10}..."
 
 1. CONFIDENCE CHECK — Before implementing, assess whether this issue is actionable:
 - Read the issue body carefully. Is the problem clearly described?
-- Search the codebase (grep/find) for the relevant code. Can you locate it?
+- Search the codebase (grep/find) for relevant code. Can you locate it?
 - Is the scope reasonable? (single file/function = good, whole subsystem = bad)
 - Is a specific fix suggested or is it a vague complaint?
 
@@ -404,17 +404,17 @@ git checkout -b fix/issue-{number} {BASE_BRANCH}
 
 3. ANALYZE — Search the codebase to find relevant files:
 - Use grep/find via exec to locate code related to the issue
-- Read the relevant files to understand the current behavior
+- Read relevant files to understand current behavior
 - Identify the root cause
 
-4. IMPLEMENT — Make the minimal, focused fix:
+4. IMPLEMENT — Make a minimal, focused fix:
 - Follow existing code style and conventions
 - Change only what is necessary to fix the issue
 - Do not add unrelated changes or new dependencies without justification
 
 5. TEST — Discover and run the existing test suite if one exists:
 - Look for package.json scripts, Makefile targets, pytest, cargo test, etc.
-- Run the relevant tests
+- Run relevant tests
 - If tests fail after your fix, attempt ONE retry with a corrected approach
 - If tests still fail, report the failure
 
@@ -425,7 +425,7 @@ git commit -m "fix: {short_description}
 Fixes {SOURCE_REPO}#{number}"
 
 7. PUSH — Push the branch:
-First, ensure the push remote uses token auth and disable credential helpers:
+First, ensure the push remote uses token auth and disables credential helpers:
 git config --global credential.helper ""
 git remote set-url {PUSH_REMOTE} https://x-access-token:$GH_TOKEN@github.com/{PUSH_REPO}.git
 Then push:
@@ -486,57 +486,57 @@ Files changed: {files_changed_list}"
 - No unrelated changes or gratuitous refactoring
 - No new dependencies without strong justification
 - If the issue is unclear or too complex to fix confidently, report your analysis instead of guessing
-- Do NOT use the gh CLI — it is not available. Use curl + GitHub REST API for all GitHub operations.
+- Do NOT use the gh CLI — it is not available. Use curl + the GitHub REST API for all GitHub operations.
 - GH_TOKEN is already in the environment — do NOT prompt for auth
 - Time limit: you have 60 minutes max. Be thorough — analyze properly, test your fix, don't rush.
 </constraints>
 ```
 
-### Spawn configuration per sub-agent:
+### 每个子代理的 Spawn 配置 (Spawn configuration per sub-agent):
 
-- runTimeoutSeconds: 3600 (60 minutes)
-- cleanup: "keep" (preserve transcripts for review)
-- If `--model` was provided, include `model: "{MODEL}"` in the spawn config
+- runTimeoutSeconds: 3600（60 分钟）
+- cleanup: "keep"（保留转录以供审查）
+- 如果提供了 `--model`，在 spawn 配置中包含 `model: "{MODEL}"`
 
-### Timeout Handling
+### 超时处理 (Timeout Handling)
 
-If a sub-agent exceeds 60 minutes, record it as:
+如果子代理超过 60 分钟，记录为：
 
 > "#{N} — Timed out (issue may be too complex for auto-fix)"
 
 ---
 
-## Results Collection
+## 结果收集 (Results Collection)
 
-**If `--cron` is active:** Skip this section entirely — the orchestrator already exited after spawning in Phase 5.
+**如果 `--cron` 处于活动状态：** 完全跳过此部分 — 编排者已在阶段 5 派生后退出。
 
-After ALL sub-agents complete (or timeout), collect their results. Store the list of successfully opened PRs in `OPEN_PRS` (PR number, branch name, issue number, PR URL) for use in Phase 6.
+在所有子代理完成（或超时）后，收集它们的结果。将成功打开的 PR 列表存储在 `OPEN_PRS` 中（PR 编号、分支名称、issue 编号、PR URL）以供阶段 6 使用。
 
-Present a summary table:
+显示摘要表格：
 
-| Issue                 | Status    | PR                             | Notes                          |
+| Issue                 | 状态 (Status)    | PR                             | 备注 (Notes)                          |
 | --------------------- | --------- | ------------------------------ | ------------------------------ |
 | #42 Fix null pointer  | PR opened | https://github.com/.../pull/99 | 3 files changed                |
 | #37 Add retry logic   | Failed    | --                             | Could not identify target code |
 | #15 Update docs       | Timed out | --                             | Too complex for auto-fix       |
 | #8 Fix race condition | Skipped   | --                             | PR already exists              |
 
-**Status values:**
+**状态值 (Status values):**
 
-- **PR opened** — success, link to PR
-- **Failed** — sub-agent could not complete (include reason in Notes)
-- **Timed out** — exceeded 60-minute limit
-- **Skipped** — existing PR detected in pre-flight
+- **PR opened** — 成功，链接到 PR
+- **Failed** — 子代理无法完成（在备注中包含原因）
+- **Timed out** — 超过 60 分钟限制
+- **Skipped** — 在预先检查中检测到现有 PR
 
-End with a one-line summary:
+以一行摘要结束：
 
 > "Processed {N} issues: {success} PRs opened, {failed} failed, {skipped} skipped."
 
-**Send notification to channel (if --notify-channel is set):**
-If `--notify-channel` was provided, send the final summary to that Telegram channel using the `message` tool:
+**发送通知到频道（如果设置了 --notify-channel）:**
+如果提供了 `--notify-channel`，使用 `message` 工具将最终摘要发送到该 Telegram 频道：
 
 ```
-Use the message tool with:
+使用 message 工具：
 - action: "send"
 - channel: "telegram"
 - target: "{notify-channel}"
@@ -546,167 +546,167 @@ Processed {N} issues: {success} PRs opened, {failed} failed, {skipped} skipped.
 
 {PR_LIST}"
 
-Where PR_LIST includes only successfully opened PRs in format:
+其中 PR_LIST 仅包括成功打开的 PR，格式为：
 • #{issue_number}: {PR_url} ({notes})
 ```
 
-Then proceed to Phase 6.
+然后继续到阶段 6。
 
 ---
 
-## Phase 6 — PR Review Handler
+## Phase 6 — PR 审查处理器 (PR Review Handler)
 
-This phase monitors open PRs (created by this skill or pre-existing `fix/issue-*` PRs) for review comments and spawns sub-agents to address them.
+此阶段监控打开的 PR（由此技能创建或预先存在的 `fix/issue-*` PR）的 review 评论，并派生子代理来处理它们。
 
-**When this phase runs:**
+**此阶段何时运行 (When this phase runs):**
 
-- After Results Collection (Phases 2-5 completed) — checks PRs that were just opened
-- When `--reviews-only` flag is set — skips Phases 2-5 entirely, runs only this phase
-- In watch mode — runs every poll cycle after checking for new issues
+- 结果收集之后（阶段 2-5 完成）— 检查刚刚打开的 PR
+- 当设置 `--reviews-only` 标志时 — 完全跳过阶段 2-5，仅运行此阶段
+- 在 watch 模式下 — 每次轮询周期后运行，在检查新的 issues 之后
 
-**Cron review mode (`--cron --reviews-only`):**
-When both `--cron` and `--reviews-only` are set:
+**Cron review 模式（`--cron --reviews-only`）:**
+当同时设置 `--cron` 和 `--reviews-only` 时：
 
-1. Run token resolution (Phase 2 token section)
-2. Discover open `fix/issue-*` PRs (Step 6.1)
-3. Fetch review comments (Step 6.2)
-4. **Analyze comment content for actionability** (Step 6.3)
-5. If actionable comments are found, spawn ONE review-fix sub-agent for the first PR with unaddressed comments — fire-and-forget (do NOT await result)
-   - Use `cleanup: "keep"` and `runTimeoutSeconds: 3600`
-   - If `--model` was provided, include `model: "{MODEL}"` in the spawn config
-6. Report: "Spawned review handler for PR #{N} — will push fixes when complete"
-7. Exit the skill immediately. Do not proceed to Step 6.5 (Review Results).
+1. 运行 token 解析（阶段 2 token 部分）
+2. 发现打开的 `fix/issue-*` PR（步骤 6.1）
+3. 获取 review 评论（步骤 6.2）
+4. **分析评论内容的可操作性**（步骤 6.3）
+5. 如果发现可操作的评论，为第一个带有未处理评论的 PR 派生 ONE review-fix 子代理 — 即发即忘（不要等待结果）
+   - 使用 `cleanup: "keep"` 和 `runTimeoutSeconds: 3600`
+   - 如果提供了 `--model`，在 spawn 配置中包含 `model: "{MODEL}"`
+6. 报告："Spawned review handler for PR #{N} — will push fixes when complete"
+7. 立即退出技能。不要继续到步骤 6.5（Review Results）。
 
-If no actionable comments found, report "No actionable review comments found" and exit.
+如果未发现可操作的评论，报告"No actionable review comments found"并退出。
 
-**Normal mode (non-cron) continues below:**
+**普通模式（非 cron）继续如下：**
 
-### Step 6.1 — Discover PRs to Monitor
+### 步骤 6.1 — 发现要监控的 PR (Discover PRs to Monitor)
 
-Collect PRs to check for review comments:
+收集要检查 review 评论的 PR：
 
-**If coming from Phase 5:** Use the `OPEN_PRS` list from Results Collection.
+**如果来自阶段 5：** 使用结果收集中的 `OPEN_PRS` 列表。
 
-**If `--reviews-only` or subsequent watch cycle:** Fetch all open PRs with `fix/issue-` branch pattern:
+**如果是 `--reviews-only` 或后续 watch 循环：** 获取所有带有 `fix/issue-` 分支模式的打开 PR：
 
 ```
 curl -s -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" \
   "https://api.github.com/repos/{SOURCE_REPO}/pulls?state=open&per_page=100"
 ```
 
-Filter to only PRs where `head.ref` starts with `fix/issue-`.
+过滤到仅 `head.ref` 以 `fix/issue-` 开头的 PR。
 
-For each PR, extract: `number` (PR number), `head.ref` (branch name), `html_url`, `title`, `body`.
+对于每个 PR，提取：`number`（PR 编号）、`head.ref`（分支名称）、`html_url`、`title`、`body`。
 
-If no PRs found, report "No open fix/ PRs to monitor" and stop (or loop back if in watch mode).
+如果未找到 PR，报告"No open fix/ PRs to monitor"并停止（如果在 watch 模式则循环返回）。
 
-### Step 6.2 — Fetch All Review Sources
+### 步骤 6.2 — 获取所有审查源 (Fetch All Review Sources)
 
-For each PR, fetch reviews from multiple sources:
+对于每个 PR，从多个源获取 reviews：
 
-**Fetch PR reviews:**
+**获取 PR reviews：**
 
 ```
 curl -s -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" \
   "https://api.github.com/repos/{SOURCE_REPO}/pulls/{pr_number}/reviews"
 ```
 
-**Fetch PR review comments (inline/file-level):**
+**获取 PR review 评论（内联/文件级别）：**
 
 ```
 curl -s -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" \
   "https://api.github.com/repos/{SOURCE_REPO}/pulls/{pr_number}/comments"
 ```
 
-**Fetch PR issue comments (general conversation):**
+**获取 PR issue 评论（一般对话）：**
 
 ```
 curl -s -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" \
   "https://api.github.com/repos/{SOURCE_REPO}/issues/{pr_number}/comments"
 ```
 
-**Fetch PR body for embedded reviews:**
-Some review tools (like Greptile) embed their feedback directly in the PR body. Check for:
+**获取 PR body 以获取嵌入的 reviews：**
+一些 review 工具（如 Greptile）直接在 PR body 中嵌入它们的反馈。检查：
 
-- `<!-- greptile_comment -->` markers
-- Other structured review sections in the PR body
+- `<!-- greptile_comment -->` 标记
+- PR body 中的其他结构化 review 部分
 
 ```
 curl -s -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" \
   "https://api.github.com/repos/{SOURCE_REPO}/pulls/{pr_number}"
 ```
 
-Extract the `body` field and parse for embedded review content.
+提取 `body` 字段并解析嵌入的 review 内容。
 
-### Step 6.3 — Analyze Comments for Actionability
+### 步骤 6.3 — 分析评论的可操作性 (Analyze Comments for Actionability)
 
-**Determine the bot's own username** for filtering:
+**确定 bot 自己的用户名**以进行过滤：
 
 ```
 curl -s -H "Authorization: Bearer $GH_TOKEN" https://api.github.com/user | jq -r '.login'
 ```
 
-Store as `BOT_USERNAME`. Exclude any comment where `user.login` equals `BOT_USERNAME`.
+存储为 `BOT_USERNAME`。排除任何 `user.login` 等于 `BOT_USERNAME` 的评论。
 
-**For each comment/review, analyze the content to determine if it requires action:**
+**对于每个评论/review，分析内容以确定是否需要操作：**
 
-**NOT actionable (skip):**
+**不可操作（跳过）(NOT actionable - skip):**
 
-- Pure approvals or "LGTM" without suggestions
-- Bot comments that are informational only (CI status, auto-generated summaries without specific requests)
-- Comments already addressed (check if bot replied with "Addressed in commit...")
-- Reviews with state `APPROVED` and no inline comments requesting changes
+- 纯批准或"LGTM"而没有建议
+- 仅信息性的 bot 评论（CI 状态、没有特定请求的自动生成摘要）
+- 已被处理的评论（检查 bot 是否回复了"Addressed in commit..."）
+- 状态为 `APPROVED` 且没有请求更改的内联评论的 reviews
 
-**IS actionable (requires attention):**
+**可操作（需要关注）(IS actionable - requires attention):**
 
-- Reviews with state `CHANGES_REQUESTED`
-- Reviews with state `COMMENTED` that contain specific requests:
+- 状态为 `CHANGES_REQUESTED` 的 reviews
+- 状态为 `COMMENTED` 并包含特定请求的 reviews：
   - "this test needs to be updated"
-  - "please fix", "change this", "update", "can you", "should be", "needs to"
-  - "will fail", "will break", "causes an error"
-  - Mentions of specific code issues (bugs, missing error handling, edge cases)
-- Inline review comments pointing out issues in the code
-- Embedded reviews in PR body that identify:
-  - Critical issues or breaking changes
-  - Test failures expected
-  - Specific code that needs attention
-  - Confidence scores with concerns
+  - "please fix"、"change this"、"update"、"can you"、"should be"、"needs to"
+  - "will fail"、"will break"、"causes an error"
+  - 提及特定代码问题（bug、缺少错误处理、边缘情况）
+- 指出代码中问题的内联 review 评论
+- PR body 中的嵌入 reviews，识别：
+  - 关键问题或破坏性更改
+  - 预期的测试失败
+  - 需要关注的特定代码
+  - 有担忧的置信度分数
 
-**Parse embedded review content (e.g., Greptile):**
-Look for sections marked with `<!-- greptile_comment -->` or similar. Extract:
+**解析嵌入的 review 内容（如 Greptile）(Parse embedded review content):**
+查找用 `<!-- greptile_comment -->` 或类似标记的部分。提取：
 
-- Summary text
-- Any mentions of "Critical issue", "needs attention", "will fail", "test needs to be updated"
-- Confidence scores below 4/5 (indicates concerns)
+- 摘要文本
+- 任何提及"Critical issue"、"needs attention"、"will fail"、"test needs to be updated"
+- 低于 4/5 的置信度分数（表示担忧）
 
-**Build actionable_comments list** with:
+**构建 actionable_comments 列表 (Build actionable_comments list)**，包括：
 
-- Source (review, inline comment, PR body, etc.)
-- Author
-- Body text
-- For inline: file path and line number
-- Specific action items identified
+- 源（review、内联评论、PR body 等）
+- 作者
+- 正文文本
+- 对于内联：文件路径和行号
+- 识别的特定操作项
 
-If no actionable comments found across any PR, report "No actionable review comments found" and stop (or loop back if in watch mode).
+如果在任何 PR 中未发现可操作的评论，报告"No actionable review comments found"并停止（如果在 watch 模式则循环返回）。
 
-### Step 6.4 — Present Review Comments
+### 步骤 6.4 — 展示审查评论 (Present Review Comments)
 
-Display a table of PRs with pending actionable comments:
+显示带有待处理可操作评论的 PR 表格：
 
 ```
-| PR | Branch | Actionable Comments | Sources |
+| PR | 分支 (Branch) | 可操作评论 (Actionable Comments) | 来源 (Sources) |
 |----|--------|---------------------|---------|
 | #99 | fix/issue-42 | 2 comments | @reviewer1, greptile |
 | #101 | fix/issue-37 | 1 comment | @reviewer2 |
 ```
 
-If `--yes` is NOT set and this is not a subsequent watch poll: ask the user to confirm which PRs to address ("all", comma-separated PR numbers, or "skip").
+如果未设置 `--yes` 并且这不是后续的 watch 轮询：要求用户确认要处理哪些 PR（"all"、逗号分隔的 PR 编号或"skip"）。
 
-### Step 6.5 — Spawn Review Fix Sub-agents (Parallel)
+### 步骤 6.5 — 派生 Review 修复子代理（并行）(Spawn Review Fix Sub-agents - Parallel)
 
-For each PR with actionable comments, spawn a sub-agent. Launch up to 8 concurrently.
+对于每个带有可操作评论的 PR，派生子代理。最多同时启动 8 个。
 
-**Review fix sub-agent prompt:**
+**Review 修复子代理提示 (Review fix sub-agent prompt):**
 
 ```
 You are a PR review handler agent. Your task is to address review comments on a pull request by making the requested changes, pushing updates, and replying to each comment.
@@ -730,13 +730,13 @@ Branch: {branch_name}
 {json_array_of_actionable_comments}
 
 Each comment has:
-- id: comment ID (for replying)
-- user: who left it
-- body: the comment text
-- path: file path (for inline comments)
-- line: line number (for inline comments)
-- diff_hunk: surrounding diff context (for inline comments)
-- source: where the comment came from (review, inline, pr_body, greptile, etc.)
+- id: comment ID（用于回复）
+- user: 谁留下的它
+- body: 评论文本
+- path: 文件路径（对于内联评论）
+- line: 行号（对于内联评论）
+- diff_hunk: 周围 diff 上下文（对于内联评论）
+- source: 评论来自哪里（review、inline、pr_body、greptile 等）
 </review_comments>
 
 <instructions>
@@ -780,86 +780,86 @@ GIT_ASKPASS=true git push {PUSH_REMOTE} {branch_name}
 
 7. REPLY — For each addressed comment, post a reply:
 
-For inline review comments (have a path/line), reply to the comment thread:
+对于内联 review 评论（有路径/行），回复评论线程：
 curl -s -X POST \
   -H "Authorization: Bearer $GH_TOKEN" \
   -H "Accept: application/vnd.github+json" \
   https://api.github.com/repos/{SOURCE_REPO}/pulls/{pr_number}/comments/{comment_id}/replies \
   -d '{"body": "Addressed in commit {short_sha} — {brief_description_of_change}"}'
 
-For general PR comments (issue comments), reply on the PR:
+对于一般 PR 评论（issue 评论），在 PR 上回复：
 curl -s -X POST \
   -H "Authorization: Bearer $GH_TOKEN" \
   -H "Accept: application/vnd.github+json" \
   https://api.github.com/repos/{SOURCE_REPO}/issues/{pr_number}/comments \
   -d '{"body": "Addressed feedback from @{reviewer}:\n\n{summary_of_changes_made}\n\nUpdated in commit {short_sha}"}'
 
-For comments you could NOT address, reply explaining why:
+对于你无法处理的评论，回复解释原因：
 "Unable to address this comment: {reason}. This may need manual review."
 
 8. REPORT — Send back a summary:
 - PR URL
-- Number of comments addressed vs skipped
+- 已处理与跳过的评论数量
 - Commit SHA
-- Files changed
-- Any comments that need manual attention
+- 更改的文件
+- 需要手动关注的任何评论
 </instructions>
 
 <constraints>
-- Only modify files relevant to the review comments
-- Do not make unrelated changes
-- Do not force-push — always regular push
-- If a comment contradicts another comment, address the most recent one and flag the conflict
-- Do NOT use the gh CLI — use curl + GitHub REST API
-- GH_TOKEN is already in the environment — do not prompt for auth
-- Time limit: 60 minutes max
+- 仅修改与 review 评论相关的文件
+- 不要进行无关的更改
+- 不要 force-push — 始终常规推送
+- 如果评论与另一个评论矛盾，处理最新的一个并标记冲突
+- 不要使用 gh CLI — 使用 curl + GitHub REST API
+- GH_TOKEN 已在环境中 — 不要提示认证
+- 时间限制：最多 60 分钟
 </constraints>
 ```
 
-**Spawn configuration per sub-agent:**
+**每个子代理的 Spawn 配置 (Spawn configuration per sub-agent):**
 
-- runTimeoutSeconds: 3600 (60 minutes)
-- cleanup: "keep" (preserve transcripts for review)
-- If `--model` was provided, include `model: "{MODEL}"` in the spawn config
+- runTimeoutSeconds: 3600（60 分钟）
+- cleanup: "keep"（保留转录以供审查）
+- 如果提供了 `--model`，在 spawn 配置中包含 `model: "{MODEL}"`
 
-### Step 6.6 — Review Results
+### 步骤 6.6 — 审查结果 (Review Results)
 
-After all review sub-agents complete, present a summary:
+所有 review 子代理完成后，显示摘要：
 
 ```
-| PR | Comments Addressed | Comments Skipped | Commit | Status |
+| PR | 已处理评论 (Comments Addressed) | 跳过评论 (Comments Skipped) | 提交 (Commit) | 状态 (Status) |
 |----|-------------------|-----------------|--------|--------|
 | #99 fix/issue-42 | 3 | 0 | abc123f | All addressed |
 | #101 fix/issue-37 | 1 | 1 | def456a | 1 needs manual review |
 ```
 
-Add comment IDs from this batch to `ADDRESSED_COMMENTS` set to prevent re-processing.
+将此批次的评论 ID 添加到 `ADDRESSED_COMMENTS` 集合以防止重新处理。
 
 ---
 
-## Watch Mode (if --watch is active)
+## Watch 模式（如果 --watch 处于活动状态）(Watch Mode - if --watch is active)
 
-After presenting results from the current batch:
+在展示当前批次的结果后：
 
-1. Add all issue numbers from this batch to the running set PROCESSED_ISSUES.
-2. Add all addressed comment IDs to ADDRESSED_COMMENTS.
-3. Tell the user:
+1. 将此批次的所有 issue 编号添加到运行中的 PROCESSED_ISSUES 集合。
+2. 将所有已处理的评论 ID 添加到 ADDRESSED_COMMENTS。
+3. 告诉用户：
    > "Next poll in {interval} minutes... (say 'stop' to end watch mode)"
-4. Sleep for {interval} minutes.
-5. Go back to **Phase 2 — Fetch Issues**. The fetch will automatically filter out:
-   - Issues already in PROCESSED_ISSUES
-   - Issues that have existing fix/issue-{N} PRs (caught in Phase 4 pre-flight)
-6. After Phases 2-5 (or if no new issues), run **Phase 6** to check for new review comments on ALL tracked PRs (both newly created and previously opened).
-7. If no new issues AND no new actionable review comments → report "No new activity. Polling again in {interval} minutes..." and loop back to step 4.
-8. The user can say "stop" at any time to exit watch mode. When stopping, present a final cumulative summary of ALL batches — issues processed AND review comments addressed.
+4. 休眠 {interval} 分钟。
+5. 返回到 **阶段 2 — 获取 Issues**。获取将自动过滤掉：
+   - 已经在 PROCESSED_ISSUES 中的 issues
+   - 具有现有 fix/issue-{N} PR 的 issues（在阶段 4 预先检查中捕获）
+6. 阶段 2-5 之后（或如果没有新 issues），运行 **阶段 6** 以检查所有跟踪 PR（新创建和先前打开的）上的新 review 评论。
+7. 如果没有新 issues 并且没有新的可操作 review 评论 → 报告"No new activity. Polling again in {interval} minutes..."并循环回到步骤 4。
+8. 用户可以随时说"stop"以退出 watch 模式。停止时，显示所有批次的最终累积摘要 — 已处理的 issues 和已处理的 review 评论。
 
-**Context hygiene between polls — IMPORTANT:**
-Only retain between poll cycles:
+**轮询之间的上下文卫生 — 重要 (Context hygiene between polls - IMPORTANT):**
+仅在轮询周期之间保留：
 
-- PROCESSED_ISSUES (set of issue numbers)
-- ADDRESSED_COMMENTS (set of comment IDs)
-- OPEN_PRS (list of tracked PRs: number, branch, URL)
-- Cumulative results (one line per issue + one line per review batch)
-- Parsed arguments from Phase 1
-- BASE_BRANCH, SOURCE_REPO, PUSH_REPO, FORK_MODE, BOT_USERNAME
-  Do NOT retain issue bodies, comment bodies, sub-agent transcripts, or codebase analysis between polls.
+- PROCESSED_ISSUES（issue 编号集合）
+- ADDRESSED_COMMENTS（评论 ID 集合）
+- OPEN_PRS（跟踪 PR 列表：编号、分支、URL）
+- 累积结果（每个 issue 一行 + 每个 review 批次一行）
+- 从阶段 1 解析的参数
+- BASE_BRANCH、SOURCE_REPO、PUSH_REPO、FORK_MODE、BOT_USERNAME
+  不要在轮询之间保留 issue bodies、评论 bodies、子代理转录或代码库分析。
